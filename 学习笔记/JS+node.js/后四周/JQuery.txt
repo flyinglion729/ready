@@ -1,0 +1,325 @@
+jquery的版本
+1.x.x :1.12.4能支持 ie6-8  
+2.x.x : 
+3.x.x :
+
+jquery入口函数:
+$(documeny).ready(function(){
+
+	代码	
+})
+$(function(){
+	代码	
+})
+jquery的入口函数可以写多个，并不会像window.onload覆盖
+jquery的入口函数运行速度比window.onload要快，不会等图片加载
+
+$符号是一个函数
+只要是$()里面生成的就是jquery对象.是一个类数组
+$也可以用jQuery代替 
+
+更方便的选择dom
+$("#id")
+$("li")
+$(".class")
+
+jquery对象可以转换为dom对象
+var a = $(".class")[0];
+var a = $(".class").get(0);
+
+dom对象转换为jquery
+var $id = $(a);
+
+层级选择器
+紧邻兄弟选择器:
+	$("#id+li") 选择id紧贴着的后面的li标签
+	$("#id~li")选择id后面所有的li标签
+	$("#id>ul")选择id直接下面的ul标签
+	$("ul li")选择ul 后面的li所有标签
+和css一样
+
+jQuery事件机制.可以直接用jquery对象绑定
+1、事件绑定:
+	简单事件绑定:
+	可以给选中的元素自动全部绑定:内部隐式迭代
+	$("li").click(function(e){
+	
+})
+	bind事件绑定:
+	$("li").bind("click mouseout",function)
+	//可以绑定多个事件
+
+	delegate事件绑定:
+	$("ul").delegate("li","click mouseout",function())
+	//也可以绑定多个事件 但是只能绑定在子元素上
+	//可以实现动态绑定
+	
+	on事件绑定（常用）: 代替bind和delegate
+	$('ul').on("click","li",function(){
+		代码
+	})
+	可以不要中间的"li"
+
+事件解绑
+	//当事件绑定使用的是on，解绑使用off
+	$("ul").off();//解绑jQuery对象上的所有用On绑定的函数
+	
+	$("ul").off('click',fn)//解绑单个事件函数
+	
+	$("ul").off("mouseout")//解绑某一个事件
+	//当事件绑定是使用delegate,解除绑定用undelegate
+	$("ul").undelegate();
+
+	//如果事件绑定是使用bind，解除绑定是unbind
+	$("ul").unbind();
+
+	***但是 off()解除其实是万能的解绑 但是最好还是按着规定来
+
+事件触发
+
+	$("ul")trigger('focus');//会触发浏览器的默认动作
+	         triggerHuamee
+
+事件对象
+
+	$("input").keydown(function(e){
+		return false;
+		//能阻止冒泡和浏览器默认事
+	}
+	
+each方法:能遍历每一个jQuery对象
+$("li").each(function(index,element){
+	index 是索引
+	elemeny 是遍历到的dom元素 ***注意是dom元素
+})
+each方法还能遍历其他类型 例如数组:
+$.each(arr,function(index,value){
+	数组也能遍历
+})
+
+jQuery动画:
+	元素隐藏 hide()
+	$("div").hide(1000)//加入时间就有动画效果
+		fast 200/slow600/nomal400
+	$("div").hide(1000,function) //后面的函数在动画结束的回调
+	元素显示 show()
+	不占位置
+
+	slideDown/slideUp
+	//不加时间也有动画效果，但是也可以加时间
+	Up是隐身 Down是显
+	slideToggle()//显示和隐藏切换动画
+	不占位置
+
+	fadeIn/fadeOut/fadeToggle/fadeTo
+	//改变透明度  不加时间也有动画效果
+	//改变透明度到某一个度
+	fadeTo(1000,0.6)
+	不占位置
+	
+jQuery自定义动画:
+	$("div").animate({width:200},1000)
+	可以连续调用：
+	$("div").animate().animate();
+
+	动画之间可以插入非动画
+	animate()
+	queue(next)
+	animate()
+	
+
+jQuery停止动画:
+	$("div").stop() //停止当前动画
+	第一个参数//是否清空当前动画队列
+	stop(true)
+	第二个参数//是否立即完成当前动画
+	stop(true,true)
+	
+选择器
+$("li:eq(0)")  li标签的第0个	
+$("div:has(p)") 所有包含P标签的div
+
+addClass()  增加类名
+removeClass() 删除类名
+eq(0) 类似数组的【0】
+siblings() 可以选中当前的其他兄弟元素
+
+样式操作：
+jQuery 获取值只能一个，赋值就会有属性迭代
+hasClass()是否有某个类名
+切换类名：有就删除 没有添加
+toggleClass()
+
+节点操作:
+获取表单元素的值 val();
+创建元素节点 var li = $("<li></li>");
+插入元素 $("ul").append(li)  在最后插入
+	$("ul").prepend(li)  从前面插入
+作为兄弟的前兄弟插入
+	$("li").before("<li></li>")
+作为兄弟的后兄弟插入
+	$("li").after("<li></li>")
+	
+
+删除元素：remove();//自杀
+	empty();清除自己里面的内容
+
+克隆节点：clone();
+	clone(true) 克隆当前节点所有的事件
+
+添加节点里的内容:
+	html() 获取标签的内容
+	//加参数表示新设置的内容
+	html("新内容")
+	//无法获取表单元素的值
+获取表单元素的值：
+ 	$("k").val() 获取
+	//加参数就是设置
+	val("加入的内容")
+	prop(
+获取标签属性值：
+	$("div").attr("index")
+
+html() 会识别标签 类似innerHTML
+text() 不会识别标签 类似innerText
+val()方法只使用于表单 和 html()相互独立
+
+prop()方法 第一个参数是获取属性值第二个参数是替换
+attr()方法一样  但是attr针对元素，prop针对表单
+
+尺寸位置操作：
+width()/height()  内容的宽高
+innerWidth() 内容的宽度+padding
+outerWidth() 内容宽度+padding + border
+没有小数，会取整
+
+offset() 距离文档的左边和上面的距离
+得到的结果是json对象
+position() 获取距离最近的有定位的元素父级
+
+如果不传参表示获取值，如果传一个参数表示设置值
+position()是只读的 ，不允许赋值
+
+页面被卷去的距离：
+scrollLeft()
+scrollTop()
+
+jQuery 的 AJAX:
+一般使用$.ajax({ })的方法
+里面的主要参数:
+	1、url:"请求的地址"
+	2、context:document.body（指定回调函数内的this指向）
+	eg:success:function(){ $(this).addClass("done")
+	3、dataType:"jsonp",
+	//预期返回的数据类型
+	4、jsonp:设置传给服务器端的callback函数名
+	//就是传给后端的函数名，不需要改
+	5、jsonpCallback:设置响应回来的函数名
+	//就是后端响应回来的函数名，也不需要更改
+	6、data:"userName=1n&userPsw=123456";
+	//发送请求数据
+	7、success:function(msg){
+		msg参数是请求成功后
+		服务端响应的数据
+	}
+	8、error:function(xhr){
+		xhr参数是请求失败后，
+		服务端响应的数据
+	}
+	9、timeout:社会请求超时时间（毫秒）
+如果前端需要通过from表单传送文件file
+则需要使用post传输文件
+而且还需要在from标签上加入enctype 属性
+规定要使用哪种内容类型，如果是file文件内容
+就要改成"multipart/form-data"
+
+后端使用$_FILES接受前端的文件file
+后端接受到的文件会被放在一个tmp的临时文件夹
+如果不使用就会被自动删除，所以后面需要移动
+接收到的文件
+PHP后端移动文件路径使用方法:
+move_uploaded_file() 第一个规定要移动的文件
+第二个参数规定文件的新位置
+
+用post上传大额文件例如mp4等，如果直接上传会
+报错，因为web服务器会默认规定上传文件的大小限制
+
+如果像修改上传文件的大小限制可以修改php.ini文件
+或者阿帕奇服务器启动之后右键
+PHP扩展及设置
+参数值设置
+修改以下几个参数：
+file_upload = On //是否允许上传文件
+upload_max_filesize = 2048M //上传文件的最大限制
+post_max_size = 2048M //通过Post提交的最多数据
+
+max_execution_time = 3000 //脚本最长的执行时间 单位秒
+max_input_time = 3000 //接受提交的数据的时间限制 单位秒
+memory_limit = 2048M //最大的内存消耗
+
+AJAX在监听请求状态的时候用
+onreadystatechange = function(){}
+里面的if判断有两个
+xmlhttp.readyState == 4 代表请求是否已经完成
+//但是并不代表请求成功了，如果open中的地址错误也算请求完成
+但是不算请求成功
+所以需要加上
+if(xmlhttp.status >= 200&&<300||xmlhttp.status == 304）
+才算请求成功
+
+IE8及其以下版本不支持 JSON.parse();
+
+jQuery的AJAX中 使用jsonp
+不会再url 中拼接&callback 但是jQuery会自动帮我们拼接
+
+jQuery的AJAX中常用几个参数：
+$.ajax({
+	url:
+	data:
+	dataType:jsonp
+	type:get
+	success:function
+})
+jsonp和jsonpCallback 是为后台服务的
+
+jQuery的插件机制:
+	使用$.prototype.xxx = xxx来实现在原型上设置方法;
+	方便使用简洁的方法：
+	$.fn.xxx = xxx也可以实现同样的功能
+	
+这些方法只能一次扩展一个插件，太麻烦
+所以引申出extend方法：一次扩展多个插件
+$.extend(obj,a,b,c) 第一个参数是一个容器，后面的参数往第一个容器里面塞插件
+后面的参数覆盖前面的参数的插件
+最后obj里面拥有多个插件;
+
+一般会选择在$.fn 也就是jQuery的原型上插入多个插件
+也就是$.extend($.fn,obj1,obj2...);
+所以jQuery为了考虑到大家方便使用原型上插入插件
+设置了一个方法：
+$.fn.extend({
+	dd:function(){}
+})
+
+on事件绑定是无法绑定hover的
+
+在$("li")的点击事件中 $(this).index()能获取当前被
+点击的那个li的下标  如果没找到就返回-1
+
+$("p").not(".intro") 返回不带有类名"intro"的所有
+p元素
+
+$("li").each(function(index,value){}) //jquery元素遍历
+$.each(data,function(){})  //其他数组遍历
+
+js监听文字是否输入事件：
+compositionstart //输入的时候会触发
+compositionend  //输入完成之后会触发
+配合oninput事件能有效控制输入
+
+设置一个true或false给compositionstart 
+然后再在input里面设置一个If短句
+里面放需要执行的语句
+
+AJAX里面不使用dataType
+如果无法识别就会返回纯文本的php文件

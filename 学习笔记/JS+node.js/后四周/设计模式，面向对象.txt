@@ -1,0 +1,84 @@
+in属性
+通过in来判断某个属性在不在某个对象的原型链上
+console.log("age" in h1);  => true or false
+
+hasOwnProperty 方法 每个对象上都有这个方法
+判断h1本身的属性，原型链上的不算
+h1.hasOwnProperty("age")  ==> true or false
+
+instanceof 判断对象是否是某个函数的实例化对象
+console.log(s1 instanceof Student);
+原型链上的构造函数也是
+
+Object.defineProperty 定义对象的属性,
+***是Object身上的属性 不是原型上的
+系统调用
+Object.defineProperty(obj,"c",{ value: 3});
+
+value和writable 是一对属性
+set和get 是一对属性 
+不能用了value又用set
+
+获取值为get
+赋值为set
+
+ES6新语法 对象合并
+Object.assign
+var obj = Obeject.assign(obj1,obj2)
+
+ES6新语法 module
+为了解决多次调用script引用可能导致的
+变量名串用所以有这个
+***需要在浏览器中打开，不能右键打开
+
+被引用者抛出需要被引用的文件:
+1:	var obj = {};
+	export default obj;//注意加了default只能引用一个文件
+		           //不能重复引用 
+2:	export function fn(){}
+	//第二种抛出方式可以重复多次抛出
+	但是要将整个函数或者变量放在
+	export 不能使用引用
+需要引用者接收：
+1:	import aa from "./地址";//接收到的链接可以更改变量名aa
+	
+2:	import * as ff from "./地址"//可以接收
+	ff拿到的是全部export 包括default
+	会自动组成对象
+当直接用import "./index.js" 引用文件的时候
+被引用文件不需要抛出 是直接执行
+
+import aa from './'  ==>  export default 组合
+
+
+
+
+
+设计模式
+
+单例模式:
+构造函数的所有实例对象共享一个内存空间
+
+面向对象就是将整个过程绘制出来，然后需要
+重复的将其单独领出来设置为函数，还有每一步
+也单独设置函数 并且相关联
+
+当存储数据的时候，优先将数据存储在数组里面
+因为真的很好调用
+
+函数里面套函数 如果函数的实体是在外面的
+当里面的函数需要用到外面的函数变量需要传参
+function(){
+	var a = 2;
+	function a (a){  console.log(a)   }
+}
+
+面向对象的思想，应该是将整个过程想清楚
+然后固定不动的可以保留
+需要复用的抽离出来作为函数
+所以在每个小的函数里面编写的代码最好能
+灵活调用 不针对单个功能
+
+经典的就是初始化列表，当存储在云端或者
+localStorage的内容更新需要刷新页面的时候
+

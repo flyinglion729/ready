@@ -1,0 +1,32 @@
+npx gulp xx 本地使用gulp 不需要全局安装
+
+sass 文件
+可以定义变量
+定义函数
+if for
+嵌套
+
+后缀名 scss 正常cs语法
+           sass  其他cs语法
+
+正常的CSS文件
+@import url('引进其他的css文件')//css引进
+
+scss文件引进
+@import 'a'
+在编译的时候 scss文件会将引进的文件合并在
+同一个文件里
+
+如果不需要单独编译被引进文件 在文件名前面加
+下划线_
+
+静默注释// 编译之后不会出现
+
+嵌套scss
+
+&符表示是自己
+
+npm config set registry https://registry.npm.taobao.org 
+淘宝镜像
+
+可以通过加类名做成动画

@@ -1,0 +1,46 @@
+函数
+对于经常要重复使用的代码段，可以使用调用
+
+函数定义方式两种：
+1、函数申明:
+	function fn(){
+		
+	}
+2、函数表达式:
+	var fn = function(){}
+
+3、匿名函数
+	
+4、函数的参数
+形参和实参
+实参多出来不影响，
+
+Math.PI是π的值
+
+函数的返回值 return 接收函数值
+
+结束函数return 结束本次循环continue
+结束整个循环break
+
+判断是不是质数 a需要小于4 
+function num(a){
+            for(var i = 2;i<=a;i++){
+                if(a<4){
+                    return "这是质数";
+                }
+                if (a%i == 0) {
+                    return "这不是质数";
+                }
+                return "这是质数";
+            }
+        }
+        console.log(num(8))
+
+arguments 是实参的类数组
+是独属于function里的对象
+
+数组套数组可以用 arguments[0][0]
+
+arguments.callee 当前的函数体
+
+递归

@@ -1,0 +1,42 @@
+CSS盒模型
+
+margin 塌陷 取大值
+
+overflow:hidden
+	scorll 超出部分有滚动条
+	auto 自适应 多出部分才有滚动条
+
+white-space:pre 空格会被保留
+	   pre-wrap 空格留下来 自动换行
+	   pre-line 空格会被合并 回车键会保留换行
+	   nowrap 所有文字不换行 空格合并
+
+text-overflow: clip 默认
+	      ellipsis 超出文本省略
+
+ellipsis使用需要满足条件:
+	1、设置容器宽度 width
+	2、强制文本一行内显示
+	      white-space:nowrap
+	3、溢出部分隐藏:
+	      overflow:hidden
+	4、然后才是最后的:
+	      text-overflow:ellipsis;
+只能设置单行文本
+
+设置多行文本:p {
+overflow: hidden;
+text-overflow: ellipsis;
+display: -webkit-box;
+-webkit-line-clamp: 2;
+display: -webkit-box;
+-webkit-box-orient: vertical;
+}
+
+input换行会读取出来
+
+每次使用padding的时候记得减去width或者height
+
+a标签里的字体样式父级无法修改
+图片img会被text-align影响
+a标签设置margin不会被TOP和影响

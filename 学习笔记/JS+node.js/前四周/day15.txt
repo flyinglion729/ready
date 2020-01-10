@@ -1,0 +1,54 @@
+动态
+
+offsetLeft/Top  距离最近的有定位的父元素的距离
+
+offsetLeft 和 Position absolute的left
+left获取属性是带单位的字符串:120px，而且可以被赋值
+offsetLeft获取的是不带单位的number类型，但是不能被赋值
+left可以取到小数，但是offsetLeft会四舍五入取整
+
+clientWidth 获取元素的宽 不带边框 但是有padding
+
+scrollHeight:内容的宽高,如果内容小于盒子的宽高，就取盒子的宽高
+
+三大家族都是元素高度或位置相关:
+	offet家族
+		offsetHeight/offsetWidth(盒子的大小) = width + padding + border
+		offsetLeft/offsetTop:元素距离最近的有定位的父元素的距离
+		offsetParent:距离元素最近的有定位的父元素
+		offsetLeft和left的区别:
+			left:有单位,可以赋值
+			offsetLeft:没有单位,number类型,不能赋值,会取整
+
+	client家族
+		clientHeight/clientWidth(盒子的大小) = width + padding
+		计算屏幕可视区域的宽高:
+			window.innerHeight/innerWidth IE9+
+			document.documentElementclientWidth/clientHeight  标准模式
+			document.body.clientWidth/clientHieght  怪异模式
+
+	scroll家族
+		scrollWidth/scrollHieght = 元素里面内容的宽高,不能小于盒子的宽高,IE67可以小于盒子宽高
+		scrollTop/scrollLeft
+		页面被卷曲的距离
+			document.documentElement.scrollTop/scrollLeft  标准模式
+			document.body.scrollTop/scrollLeft  怪异模式
+
+	event对象
+	e.clientX/clientY:鼠标距离浏览器可视区域的距离
+	e.screenX/screenY:鼠标距离屏幕的距离
+	e.offsetX/offsetY(e.layerX/layerY):鼠标距离当前所在元素的距离
+	e.pageX/e.pageY(有兼容问题):鼠标距离文档的距离 = e.clientX/clientY + document.documentElement.scrollTop/scrollLeft(document.body.scrollTop/scrollLeft)
+
+
+不会选择文本
+
+
+可以用x/y=a/b的方式 让两个元素坐标有关联
+
+鼠标点击拖拽是使用元素的onmousedown
+里面再使用document的onmousemove达到效果
+最后再后面使用document.onmouseup就可以了
+
+event.offset 注意注意注意 要在当前的元素事件中声明才能用
+

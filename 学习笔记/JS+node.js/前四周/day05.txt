@@ -1,0 +1,154 @@
+函数的作用域：变量的起作用范围
+全局作用域：在代码的全局范围都能使用的变量
+局部作用域：在函数范围内起作用的变量
+块级作用域：在一个代码块内起作用的变量，
+	 JS里有块级作用域，es6才有
+{
+	let d = 33;
+	const e = 78;
+}
+
+词法作用域:
+不用通过代码运行，就能够通过代码语法判断出的作用域
+JS作用域规范：
+1、函数外部不能访问函数内部的变量
+2、函数内部可以访问函数外部定义的全局变量
+
+注意 函数内部用var 声明的变量是全局作用域
+
+预解析
+函数声明和变量声明提升，函数声明优先级更高
+
+事件：元素a被怎么样了，元素b就怎么样了
+1、获取事件源
+2、绑定事件 click
+3、书写驱动程序事件
+document.getElementById("num")
+
+在书写JS的时候遇到css带-的用驼峰命名
+
+在function里面的预编译不会看if、for等语句，
+所以里面的var声明可以被提升但是function不行
+function test(){
+            console.log(b);//undefined
+            if (a) {
+                var b = 100;//如果改为function b(){}也是undefined
+            }
+            console.log(b);//undefined
+            c = 234;
+            console.log(c);//234
+        }
+        var a;
+        test();
+        a = 10;
+        console.log(c);
+
+表达式:一个表达式可以产生一个值，
+有可能是运算、函数调用、有可能是字面量。
+表达式可以放在任何需要值的地方。
+
+语句:语句可以理解为一个行为，
+循环语句和判断语句就是典型的语句。
+一个程序有很多个语句组成，一般情况下;
+分割一个一个的语句
+
+例如：if for switch等 都是语句
+var a = b;var a = function (){}就是表达式
+
+window.onload = function(){}在页面加载完后再执行
+这个事件会进行覆盖 取后面的值只能书写一次
+
+input.value可以取到input里的值
+
+onchange改变字体可以分两步:
+var size = sel.value + "px";
+div.style.fontSize = size;
+
+去除字符串前后空格可以用trim();
+inp.value.trim();
+
+isNaN(num) 判断是不是数字
+如果参数值为 NaN 或字符串、对象、
+undefined等非数字值则返回 true,
+ 否则返回 false。
+**其实骨子里isNaN是判断一个值能否被Number()合法转化成数字
+1、数字形式的字符串。
+例如 "123"、"-3.14"，
+虽然是字符串型，但被 isNaN() 判为数，
+返回 false。
+（"12,345,678"，"1.2.3" 这些返回 true）
+2、空值。null、空字符串""、空数组[]，
+都可被Number()合法的转为0，
+于是被isNaN认为是数，返回false。
+（undefined、空对象{}、
+空函数等无法转数字，返回true）
+3、布尔值。Number(true)=1,
+Number(false)=0，
+所以isNaN对布尔值也返回false。
+4、长度为 1 的数组。结果取决于其中元素，
+即：isNaN([a])=isNaN(a)，
+可递归。例如isNaN([["1.5"]])=false。
+5、数字特殊形式。例如"0xabc"、
+"2.5e+7"，这样的十六进制和科学计数法，
+即使是字符串也能转数字，所以也返回false。
+
+
+
+对象
+对象是无序列表 而且属性名会主动加上字符串
+
+
+Math对象
+Math.random();可以生成一个0-1之间的随机，取不到1
+转进制
+number.toString(16);
+Math.floor(）向下取整3.4 -3 
+Math.ceil()   向上取整3.2 - 4
+Math.round()  四舍五入取整
+Math.abs() 取绝对值
+
+eg:取0-4之间的随机整数
+Math.floor(Math.random()*5);
+
+
+//如果要给元素设置内容,使用innerHTML
+p.innerHTML = result;
+很重要 这个可以通过别的元素改变另一个元素
+
+查询名人信息：
+用input获取value值之后再进行对比
+
+var text = inp.value.trim();
+去除字符串前后空格
+
+parseInt(num,2); 以目标进制设成2进制转换成10进制
+toString(16);将目标进制转换成16进制;
+
+typeof能识别六种数据类型：number String boolean undefined
+function object(null、{}、[]都属于)
+
+保留多少位小数的方法：
+保留2位小数
+num = parseInt(num*100)/100;
+
+Math.random取值范围是[0,1)
+所以例如取0-4之间的随机数需要在后面取到5
+取6-100之间的随机整数
+        var num = parseInt(6+Math.random()*95);
+        console.log(num);
+
+prompt + function可以实现交互
+
+实用空串""可以实现多个数字连在一起0014
+0002 0125
+
+16进制的6位数最大的数ffffff等于10进制的
+16777215
+所以可以用这个特点
+function randomHexColor() { //随机生成十六进制颜色
+ var hex = Math.floor(Math.random() * 16777216).toString(16); //生成ffffff以内16进制数
+ while (hex.length < 6) { //while循环判断hex位数，少于6位前面加0凑够6位
+  hex = '0' + hex;
+ }
+ return '#' + hex; //返回‘#'开头16进制颜色
+}

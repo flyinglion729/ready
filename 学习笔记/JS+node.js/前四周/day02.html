@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>day02</title>
+    <script>
+
+
+
+        // 判断是否成年
+        // var people = 19;
+        // var age = people <= 18 ? "未成年" : "成年人";
+        // console.log(age);
+        // 判断是不是闰年
+        // var year = 2004;
+        // var boom = year % 4 == 0 && year % 100 != 0 || year % 400 == 0 ? "闰年" : "平年";
+        // console.log(boom);
+
+        // 打印100以内的奇数
+        // for(var i =0;i<=100;i++){
+        //     if (i%2 != 0) {
+        //         console.log(i);
+        //     }
+        // }
+
+        // 打印100以内的奇数和
+        // var sum = 0;
+        // for(var i = 0; i <= 100;i++){
+        //     if (i%2 != 0) {
+        //         sum = sum + i;
+        //     }
+        // }
+        // console.log(sum);
+
+        // 1-20之间所有奇数的乘积
+        // var sum = 1;
+        // for(var i =0;i<=20;i++){
+        //     if (i%2 != 0) {
+        //         sum = sum * i
+        //     }
+        // }
+        // console.log(sum);
+
+        // 求1-100之间所有奇数的和
+        // var sum = 0;
+        // for(var i = 0; i <= 100; i++){
+        //     if (i%2 != 0) {
+        //         sum += i;
+        //         console.log(sum)
+        //     }
+        // }
+
+        // 计算1-100之间能3整除的数的和
+        // var sum = 0;
+        // for(var i = 0; i <= 100; i ++){
+        //     if (i%3 == 0) {
+        //         sum += i;
+        //     }
+        // }
+        // console.log(sum)
+
+        // 计算1-100之间不能被7整除的数的和
+        // var sum = 0;
+        // for(var i = 0; i <= 100; i ++){
+        //     if (i%7 != 0) {
+        //         sum += sum + i
+        //     }
+        // }
+        // console.log(sum)
+
+        // 本金10000元存入银行，年利率是千分之三，每过1年，将本金和利息相加作为新的本金。计算5年后，获得的本金是多少？(如果不会写程序，可以先把数学公式准备好
+        // var sum = 10000;
+        // for(var i = 1;i<=5;i++){
+        //     sum += 0.003 * sum
+        // }
+        // console.log(sum)
+
+
+        // 有个人想知道，一年之内一对兔子能繁殖多少对？于是就筑了一道围墙把一对兔子关在里面。
+        // 已知一对兔子每个月可以生一对小兔子，而一对兔子从出生后第3个月起每月生一对小兔子。
+        // 假如一年内没有发生死亡现象，那么，一对兔子一年内（12个月）能繁殖成多少对？
+        // （兔子的规律为数列，1，1，2，3，5，8，13，21）
+        var sum = 0;
+        var a = 1;
+        var b = 1;
+        for(var i =0; i<=10;i++){
+            sum = b;
+            b = a + b;
+            a = sum;
+        }
+        console.log(sum)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>

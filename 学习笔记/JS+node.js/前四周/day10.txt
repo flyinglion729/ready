@@ -1,0 +1,100 @@
+onclick = history.go()也能返回或者前进页面
+参数 history.go(1)是前进一页
+        history.go(-1)后退一页并且刷新
+     和history.back不一样的是后者不刷新
+        history.go(0) 刷新页面
+
+DOM操作
+DOM 节点
+选择子节点
+var div = document.getElementsByTagName("div")[0]
+空格也算节点和文本一起
+注释也算节点
+children 获取子元素
+parentNode 父元素
+
+divChind[6].attributes[0].nodeType 属性节点返回2
+attributes[]
+可以填数字,表示第几个属性，取属性名
+可以直接attributes 显示所有该节点的属性信息
+可以attributes[0].nodeValue属性值
+(同样可以用getAttribute())获得 属性值
+
+可以attributes.length 返回属性节点个数
+
+img格式的nodeValue返回NULL
+
+nodeName 返回的是大写
+
+文档类型节点
+document.doctype 就是html
+nodeName()返回是html
+
+节点的操作
+增删改查
+
+增加
+newLi = document.createElement('li') 创建标签
+newLi.innerHTML = "我是第一个li"
+ul.appendChild(newLi);放进html里面,在后面插入
+ul.insertBefore(newLi,ul.children[0])
+第一个参数是插入的子节点，第二个是参照物在前面插入
+
+删除
+自己删除自己 
+var del = document.getElementByTagName()
+del.remove();  自己删除自己
+父级删子集
+tr.removeChild(del) 父亲删除del
+
+技巧 tr.parentNode.removeChild(tr);
+
+文档碎片
+var content = document.createDocumentFragment()
+相当于创建一个新的节点
+
+获取元素的样式
+window.getComputedStyle() IE8-不支持
+
+div.currentStyle.width IE使用的
+
+<div data-index="1">
+
+可以用div.dataset.index
+
+巧用this:当for循环一个onclick事件的时候,var i 只能给与
+每一个onclick事件,onclick里面无法获取相应每一个下标
+所以可以再用一个for循环在每一个onclick的事件源上加
+一个属性index = 0~9;
+这样就能利用this.index获取每一个onclick事件对应的
+下标进行设置
+
+排他法  点击一个只有当前会有样式
+清除所有样式之后 再设置单独样式
+
+重点 index属性
+var divC = document.getElementsByTagName("div")[0];
+divC.index = 1;
+index可以凭空存在于元素中，设置编号 不会显示在HTML上
+但是就是存在
+
+获取css属性：
+1、div.offsetHeight
+     div.offsetWidth   获取元素宽高
+2、div.style.width  
+     div.style.height  只能获取行间样式
+		可以更改CSS样式
+但是即支持读也支持写
+3、getComputedStyle(div,null).width
+div.element.currentStyle.width
+只支持读取，不支持写入 但是不但能获取行间样式
+还能获取外联、内联样式表
+
+setAttribute(元素的行间属性,元素的行间属性值)
+主要用来更改元素的行间属性 style也算属性
+所以无法用这个来更改CSS样式
+
+可以通过创建一个数组，存储所有照片的名称实现随机换图
+var imgArr = ["1m.jpg","2m.jpg","3m.jpg","4m.jpg"];
+
+clearInterval()是清除同级的或者全局的定时器

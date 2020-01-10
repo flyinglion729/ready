@@ -1,0 +1,42 @@
+模板引擎
+能够实现js和html混写
+
+node.js能将本来只能再浏览器上运行的
+JS变成后端语言
+node.js是一种环境
+
+shift+鼠标右键 可以打开当前目录下的管理器
+
+进入文件夹命令：
+cd 1916
+
+node -v 检查是否安装node.js 会显示版本号
+npm -v 检查npm版本号
+
+ctrl+c 按两下能中断命令
+
+模板引擎：
+1、引进包
+2、写在<script type = "text/html" id="item">
+里面，一定要有id，还有type要改
+3、<%  括号里面写JS语法  %>
+如果需要把变量的值放上去需要<%=i%>加上=号
+4、
+全部布置完成后，再进行编译:
+最后面的<script type="text/javascript">
+	var cc = 1;
+	var html = template("item"，{})
+	//第一个参数是上面的id名
+	//第二个参数是括号里面的js的参数，
+	并且是没定义的
+	例如 里面有个a
+	{a:cc}
+
+标准语法：遍历each
+{{each 遍历的数组}}   内容   {{/each}}
+{{$index}} 遍历到的下标
+{{$value}} 遍历到的值
+
+设置滚轮滚动并加载：
+可以使用元素整体的高度加上距文档顶部的高度
+减去  window的高度加上window滚动距离

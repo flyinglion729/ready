@@ -1,0 +1,104 @@
+BOM对象
+BOM对象才是浏览器核心
+window.alert();
+window.console.log();
+console.dir(window)可以详细打印
+window.confirm("")弹窗,自带true和false
+window.close() 关闭浏览器窗口
+window.open(网站) 打开网站
+
+history对象
+window.history.back() 返回上一层
+window.history.forward() 前进一步
+
+location对象
+window.location.href="";能修改当前页面地址
+window.location.reload();重新加载网页(刷新)
+
+navigator对象
+
+浏览器窗口宽度
+window.innerWidth 浏览器当前宽度(包含滚动条)
+window.innerHeight 浏览器当前高度(包含滚动条)
+
+document.documentElement.clientHeight HTML的高度
+document.documentElement.clientWidth HTML的宽度
+document.body.clientHeight  body的高度
+
+一般情况下，html和body的宽高都是相等的，
+除非是body的margin的影响。
+其宽高不包括滚动条。
+而innerHeight和innerWidth代表的永远是窗口的大小，
+窗口变大，他们的值就会变大，窗口变小，
+他们的值也就会变小，而且它的值包括滚动条的宽度，
+有可能比body和html的值大，也可能小。
+完全在于body中的元素的尺寸。
+所以在我看来，因为innerWidth存在兼容性问题，
+所以无法有个方法能够兼容所有浏览器获得窗口的大小，
+主要是窗口的高度不能够获得。
+
+document.compatMode  能测出是否是怪异模式
+css1是标准  back是怪异模式
+
+进度条案例
+
+三种弹出框:(都属于window时间BOM)
+alert()警告框 只能点击确认 无返回值
+confirm("输入内容") 确认或取消 返回值为true或false
+prompt("提示内容","输入的内容提示") 返回值为输入的内容
+如果需要显示折行在内容区\n
+
+console.log(document.compatMode)  判断是否是怪异模式
+BackCompat 则是怪异模式
+CSS1Compat 就是标准模式
+但是由于低级IE浏览器不兼容 有时候返回
+Back 有时候返回CSS1
+所以需要兼容
+
+低版本IE浏览器不兼容 window.innerWidth
+		window.innerHeight
+会返回undefined
+
+正常的浏览器 标准模式下
+innerWidth和innerHeight就是浏览器的大小宽度高度
+而且是包含滚动条的(而且不管是否是怪异模式都不会改变)
+body的高度默认是0 随着内部元素大小撑开
+body的宽度除去自带的margin和html的宽度一致
+html的高度和innerHeight的高度一致
+html的宽度是不包含滚动条的
+怪异模式下
+body的高度和宽度与html。innerWidth一致
+但是html会随着内容撑开高度 body则不会
+
+scrollHeight
+pageXOffset:0监听X轴滚动 IE9+兼容（用不上）
+pageYOffset:0监听Y轴滚动
+
+window.onscroll = function 滚动事件
+
+通过offsetHeight属性获取元素的高度
+var top = str.offsetHeight
+
+定时器
+定时器分为两种:
+1、爆炸一次 var timer = setTimeout(function(){},2000)
+清除定时器clearTimeout(timer);
+setTimeout(执行的函数,需要等待的时间,给前面函数传递参数)
+第三个参数存在兼容问题ie9+才支持
+
+2、循环定时 setInterval(function(){},1000)
+（执行的函数,需要等待的时间,给前面函数传递参数)
+第三个参数存在兼容问题ie9+才支持
+
+定时器不会影响到后面的代码运行
+
+DOM基础操作
+header.innerHTML 认识标签
+header.innerText 不认识标签
+
+获取标签属性
+console.log(header.id);
+该方法不能获取自定义属性值
+
+fly.style.opacity = 0.85*(scroll().top/height);
+通过监听滚动的值/某元素的高度 差值来控制透明度

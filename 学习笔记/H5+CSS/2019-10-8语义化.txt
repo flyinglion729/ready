@@ -1,0 +1,44 @@
+HTML5发展史
+
+!DOCTYPE声明
+
+可省略的双标签
+
+语义化标签
+section 部分 章节(容器的作用)
+header  头部信息
+footer  底部信息
+nav 导航
+article 表示一块与上线文无关的独立内容
+aside 表示在article之外对article进行描述的标签
+figure 图文结构 子标签figcaption可以添加文字标题
+
+dialog
+canvas 画布 
+
+新标签兼容 display:block;
+智能表单url 网页
+range 滚动条 min 和max step数字间隔
+search 搜索框 有快速清空内部数据的功能
+color 出现调色板
+time  时间的样式
+date  日期的选择
+month  月份的选择
+week  周的选择
+detetime-local  本地的时间
+number 限制用户必须输入数字类型
+email 限制用户必须提交email类型
+
+input 属性 placeholder 文本未输入时提示
+	autofocus 刷新页面 光标永远指向这个inpu
+	required 验正输入胡不能为空
+	autocomplete:off/on 自动完成功能
+	novalidate 取消验证功能
+	multiple 能够输入两个以上的数据
+	pattern 正则表达式规则
+格式兼容 video 
+	子属性 source 多个格式
+
+audio 子属性 source 多个格式
+
+iframe 

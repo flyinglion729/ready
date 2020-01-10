@@ -1,0 +1,83 @@
+promise函数
+resolve是回调函数 在Promise
+最后执行
+
+面向对象
+
+闭包可以节约全局变量
+
+this的指向是调用者，
+
+this的指向是可以改变的
+call和apply
+fn.call(obj,"张三",23)
+call的第一个参数可以改变this指向
+后面的参数是传入函数里的this
+
+apply区别在于后面传参要加[]
+但是call和apply都会执行
+
+bind也能改变this指向,但是不执行函数
+不能传实参
+bind和call和apply都不会改变原函数的
+this指向 只会改变一次
+
+只能指向obj对象吗 试试看
+
+构造函数构造出来的对象自带一个
+_proto_属性 天生指向构造函数的原型
+
+obj._proto_ == Human.prototype 是正确的
+
+不过_proto_有多少层 都可以被调用者使用
+
+每一个函数的prototype属性上都有constructor构造器
+constructor指向原函数
+prototype原型指向constructor
+
+所有的对象最终都是由new Object构成
+所以在window上创建的构造函数
+的prototype.__proto__是指向
+Object.prototype  也是最后的底部
+
+Object.prototype.toString可以精确判断出
+属性的类型 比typeof精确
+
+构造函数的原型可以换为其他对象
+
+原型是为了解决多个对象分别拥有多个相同的Function
+的耦合现象所做成
+
+要实现完全继承的继承链
+1、在需要被继承的函数原型先等于给予继承的函数对象实例化的对象
+2、将给予继承的函数的形参也加入被继承的函数的形参行
+3、将给予继承的函数放在被继承的函数的第一栏执行也加入实参
+***注意要使用call将this指向改到当前函数
+4、var h2 = new Student(传入所有实参)
+function Student(name,age,num,id){
+	Human.call(this,name,age);
+	this.num = num;
+	this.id = id;
+}
+var h2 = new Student(传入4个实参);
+***注意要使用call将this指向改到当前函数
+
+ES6语法class语法糖能更加简洁的使用继承链
+class Student extends Human{
+	constructor(name,age,how,where){
+		super(name.age);
+		this.how = how;
+		this.where = where;
+	}
+	callMe(){
+		console.log(this.name);
+	}
+}	
+1、省略了第一步，不需要拿到第一个函数实例化的对象
+2、简化了函数内调用第一个构造函数中
+需要用call
+3、分成明显 constructor里面全是属性和参数
+对应为构造函数里的属性
+constructor下面全是函数
+对应为构造函数的原型
+

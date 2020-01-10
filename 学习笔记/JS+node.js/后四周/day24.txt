@@ -1,0 +1,90 @@
+异步执行：
+
+同源跨域问题：
+为了防止他人访问自己的文件
+同源的三同: 同协议 同域名 同端口
+
+xhr对象不允许跨域
+解决办法:后端在PHP文件的头设置
+header("Access-Control-Allow-Origin:*");
+可以允许AJAX不同源访问 但是这样做很危险
+
+请求主体除了xhr.setRequestHeader之外还有另一种请求主体
+mutipart/form-data:
+var form = new FormData();
+form.append('name',"zhangsan");
+form.append('age',12);
+xhr.send(form);
+
+json_encode() 将数组转化成json格式
+json_decode() 将json格式转化成数组
+
+iframe是提供网站窗口，实现网站中的网站
+
+
+
+****jsonp指的是利用javascript的scr链接外部网站
+在html页面的body最下方设置一个
+<script type="text/javascript">
+	function fn(data){
+		...代码
+	}
+</script>
+然后后面再接一个scr引用到后台获取数据，返回值
+是直接调用上面的那个函数
+<script type='text/javascript' src="./jsonp.php?callback=fn">
+scr引用获取后台数据是用get请求能在写地址栏的优势
+HTML不能识别PHP的数组形式，所以响应数据的时候
+需要用json_encode()进行转码，不然会报错
+
+
+xhr.readyState 状态码
+
+三个事件
+xhr.addEventListener("load",function(){
+	load是正常响应才发生
+}
+xhr.addEventListener("timeout",function
+	loadend是正常响应
+	超时响应、出现错误都会发生
+)
+xhr.addEventListener("timeout".function
+	timeout是超时发生
+)
+
+withCredentials 设置能不能把cookie带过来
+
+catch是捕捉错误
+
+inp.addEventListener("compositionstart")
+监听输入中文的时候输入一个才会响应
+
+在感应输入响应的时候可以用
+setTImeout 设置0秒来进行稍微的预缓存
+这样就不会发生无法响应的情况了
+
+onreadystatechange 监听服务器响应的
+状态变化
+一共有5种状态
+xhr.readyState = 0初始化 监听不到 因为没有变化  
+xhr.readyState = 1发送请求
+xhr.readyState = 2响应头
+xhr.readyState = 3响应主体
+xhr.readyState = 4响应完成
+
+onload和onreadystatechange的区别在于
+onload就算请求没找到文件返回404
+也会返回404页面
+
+1、除了表单form自带的请求：会刷新整个页面
+2、还有AJAX异步请求：只能访问同源文件，如果不同源需要后端配合还有formData请求：通过
+3、var myform = new FormData();
+myform.append("num",23)   //拼接键值对
+xhr.send(myform);
+优势在于可以传送file文件
+4、利用script的scr不同源访问
+
+在淘宝的案例中，在定时器里创建一个fn1的姓名
+然后在全局的window里面再使用fn1的进行更名
+var fn1 = xxx;
+window[fn1] = function(){};

@@ -1,0 +1,45 @@
+1、http://git-scm.com/downloads 如果初次使用先进行下载
+
+2、初次使用需要配置个人用户信息和电子邮箱地址
+$ git config --global user.name "chenyanrui"  //个人用户信息
+$ git config --global user.email "chenyanrui@1000phone.com"  //个人邮箱地址
+//  git config --list  可以查看配置信息
+
+3、当配置后信息后进行初始化第一步：
+	git init
+
+4、 git add .    //一次性将所有文件提交到暂存区
+//git rm 文件路径 --cache 删除暂存区文件
+
+5、git commit -m "简要说明"   //将暂存区文件提交到仓库
+//git diff 项目中的代码和add后的代码区别
+
+6、git reset --hard Head  版本回退到上一次提交的代码
+     git reset --hard 提交的版本号
+	//git reflog 可以查看每一次提交的版本号
+	//git log 可以显示从最近到最远的提交日志
+
+忽略文件：
+新建 .gitignore文件 //在这个文件里写一些想要被git忽略的文件或文件夹
+通过git status 查看仓库状态
+//本地仓库里面有的不会显示
+
+分支模式
+1、创建分支 :git branch 分支名
+2、列出所有分支 :git branch
+3、切换分支：git checkout 分支名
+4、切换到主分支：git checkeout master
+5、合并分支: gitmerge 分支名
+
+//当分支合并的时候如果有相同的内容会发生冲突
+所以最好分支重新创建一个文件
+
+
+****提交至gitHub仓库:
+1、将gitHub里面项目地址复制
+2、在需要推送的文件夹下打开base
+3、git remote add origin gitHub地址
+	git push -u origin master  //上面一步是将网站地址改名
+			        //第二步才是推送
+
+//git clone能将整个工程复制下来，不需要本地仓库

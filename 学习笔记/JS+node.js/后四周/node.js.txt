@@ -1,0 +1,145 @@
+下载jquery
+
+npm install jquery@1.10.34 @后面加版本号
+
+本地安装
+npm init 
+会将你从Npm下载的包的地址保存下来
+会出现在dependencies中
+^表示可以在大的版本下载 
+
+直接npm intall 会依次下载指npm定的包
+
+带lock的文件不需要 可以删除
+
+全局安装
+npm install  nodemon -g
+npm install gulp@4 -g 
+
+卸载包
+npm uninstall xxx 卸载包 
+
+nodejs文件运行:
+打开命令行 
+node 
+
+node.js导入第三方模块
+var obj = require("./xxx")
+
+每个文件都有一个module.exports空对象
+对方导入的内容就是这个对象里的内容
+
+所以如果文件需要导出 就设置一个
+module.exports = {} 把内容放对象里面
+
+导入的时候后缀名也可以省略
+例如 node.js 省略.js
+
+在导入的时候如果没写路径的./ 
+会默认查找node_modules里面的文件
+
+nodejs有两种模块
+第一种是核心模块 node.exe文件以及编写好了
+第二种是第三方模块 也叫文件模块 需要自己下载引用
+
+由于npm是国外资源，在国内使用非常不方便
+所以国内整理了很多镜像网站供国内用户使用
+
+全局变量：
+__filename:  当前文件的绝对路径
+__dirname:  当前文件目录的绝对路径
+console.log
+module
+exports
+require
+
+1、url模块 ：处理浏览器发送的请求
+//引入模块 node自带的核心模块
+var url = require("url");
+
+var string = "请求地址"
+//解析url
+var json = url.parse(string);
+
+***拿到json.pathname 
+//指的是路由 就是路径
+***拿到参数json.query
+//但是这个参数是有百分比编码的
+
+引入querystring模块//为了解码上面的百分比编码
+var querystring = require("querystring")
+querystring.parse(json.query)
+//能把a=1&b=2&c=3这种格式转化成json格式
+//querystring.stringify 可以把Json格式转回来
+
+2、文件模块: 将后台数据响应给前台
+var fs = require("fs");//文件系统模块
+//引入一个path模块 负责找html路径
+var path = require('path');
+var pathname = "index.html"//需要查找的文件名
+path.join(__dirname,'www',pathname)
+也可以拼成相对路径
+__dirname改成./
+path.resolve也是一样的 但是不能拼成相对路径
+//找到当前文件夹下的文件路径
+
+***最好不要直接写地址 因为不同系统的路径表达不一样
+例如window和imac
+
+//根据文件路径去读取文件
+fs.readFile(filename,(err,data)=>{  data} )
+//凡是网络操作或是文件操作，都是得到buffer类型
+所以要用toString()格式
+data.toString()
+
+然后用fs.writeFile("路径",data,回调函数)写入
+
+同步的方法再做一次:
+
+http模块：
+引入模块:var http = require("http")
+
+nodemon 当文件发生改变会自动重启node
+
+
+
+
+
+文件模块的导出和导入：
+导出 module.export = {}
+导入 var num = require("./地址")
+
+引入jquery包的特殊方法：
+var $ = require("jquery")
+
+fs.readFile(来源路由,function(err,data){}) 
+//读取文件 data是buffer数据 需要toString()转码
+fs.write(新的路由,需要拷贝的文件,function(){回调函数})
+//拷贝文件到新的路由
+fs.watch(监听的路由,function(){
+当监听的文件变化是启动的回调函数
+}
+//可以时刻监听当前文件有无修改
+//可以在里面设置COPY函数 实现自动更改
+
+var server= http.createServer()//开启一个web服务器
+//是拿到http.Server的一个类
+server.listen(80)//web服务器开始监听80端口
+
+服务器响应有两种方式：
+1、直接在开启服务器的时候调用函数：
+var server = http.createServer(()=>{
+	console.log("响应回调")
+})
+2、另起一个server事件:
+server.on("request",function(req,res){
+	//req:是关于请求的信息
+	req.url //能拿到浏览器对服务器的请求地址
+	//res:是关于响应的信息
+	res.end(表示响应结束之后可以调用,可以传函数)
+})
+
+nodemon xxx 启动可以时刻监听文件，文件一变化就重启服务器
+
+当你只响应一个html的时候，里面html相应的css
+也会跟着过来

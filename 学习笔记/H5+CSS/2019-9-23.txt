@@ -1,0 +1,42 @@
+元素类型 元素转换
+
+内联元素 盒子模型 上下失效 左右生效
+a i em
+
+块元素：
+div dl dt dd form
+h1-h6
+hr 
+ol p ul fieldset
+内联元素:
+a br i em label
+span strong textarea
+u 下划线 select
+行内块元素:
+img input
+
+display:none 消失
+
+li的元素类型不属于块 但是类似块
+属于list-item类型
+
+当元素设置了float之后 相当于给元素加了
+display:block
+
+垂直居中需要满足的三个条件：
+1、必须给父级元素加上 text-align:center
+2、必须给当前元素转成行内块元素
+	display:inline-block;
+     再给当前元素加上
+	vertical-align:middle;
+3、在当前元素的后面(没有回车)加上同级元素
+span;并对span进行
+	vertical-align:middle;
+	width:0;
+	height:100%;
+	diaplay:line-block;
+
+a标签不设宽度 用Padding撑开 就可以随着字数的多少来
+自适应宽度
+
+a标签嵌套img会出bug 用vertical-align:top

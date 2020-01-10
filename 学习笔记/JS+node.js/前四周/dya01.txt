@@ -1,0 +1,109 @@
+Javascript规则：
+1、不能使用系统关键字
+
+var num = 0x23 表示十六进制 (x不是*号)
+var num = 012 表示八进制
+
+控制台输出：
+console.log  
+console.warn 警告  
+console.error 错误
+
+转义 \可以输出引号
+
+数字类型控制台输出是蓝色
+字符串类型控制台输出是黑色
+布尔类型控制台输出是灰蓝色
+
+字符串多少个字符可以通过
+1、str.length
+console.log(str.length)
+2、隐式转换 a+""
+3、String(str)
+
+typeof 判断数字类型
+var a = 2;
+console.log(typeof a);
+
+转换类型
+var a = 13;
+var b = a.toString();
+console.log(a);
+
+console.log(String(a));
+
+toString和String的区别：
+toString不能转换null和undefined;
+String是强制转换可以转换;
+
+隐式类型转换
+var d = a + "abc"; 加号只要有一个是字符串就是拼接的意思
+简单来说就是转成字符串的类型
+
+转换为Number类型
+方法一：Number()可以把任意数据类型转化为number类型
+但是转化不了会显示为NAN 但是是属于Numberle类型
+
+var c="abc"
+var num = Number(c);
+console.log(num)
+会打印出NAN
+但是如果var c = null 会显示为0
+
+方法二：parseInt():可以把任意的数据类型转化成number的整数类型
+console.log(parseInt(a));
+从第一个数字开始转换，直到没有数字
+也就是说也转换不了null和undefined 会变为NAN
+
+方法三：parseFloat()可以把任意number类型
+转为为小数
+转换原理和方法二基本相同
+
+方法四：隐式转换类型
+var num = +d;
+在前面加+号- * /
+
+转换布尔类型：
+Boolean();""空串也属于false
+但是字符串类型是true
+false类型的：
+0,undefined,null,"",false,NaN
+除了以上都是true
+
+操作符(运算符）一定会有结果
++ - * / %
+
+JS不擅长小数操作
+
+比较运算符 结果是布尔值
+null==null 是正确的
+null==0 是错误的
+但是 null==undefined是正确的
+而且undefined==0也是错误的
+NaN == NaN是错的
+
+赋值运算符
+=
+
+a = a+3
+a += 3
+
+一元运算符
+var a = 20;
+a++
+console.log(a++) 先打印a再加1
+console.log(++a) 先+1再打印a
+
+var a = 1;
+var b = a++ + ++a
+结果是b=4
+因为a在运算的时候取1 但是取完值后被+1了 然后后面的++a就直接加了
+
+逻辑运算符 与或非
+&& || !
+&&和||不一定是布尔值
+!的结果也是布尔值
+所以隐性转布尔 可以用！！两个非转布尔
+
+
+

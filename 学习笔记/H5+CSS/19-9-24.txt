@@ -1,0 +1,40 @@
+定位 position:static 
+	     absolute
+	    sticky
+	    relative
+
+sticky只能设置TOP属性 兼容性差
+安卓不支持 IOS支持
+
+让元素始终在窗口水平垂直位置居中
+1、div{
+	width:200px;
+	height:200px;
+	background:#f00;
+	position:fixed;
+	left:0;
+	right:0;
+	top:0;
+	bottom:0;
+	margin:auto;
+}
+2、div{
+	width:200px;
+	height:200px;
+	background:#f00;
+	position:fixed;
+	left:50%;
+	top:50%;
+	margin:-100px 0 0 -100px;
+}
+窗口自适应absolute:
+left:10px right:10px  不设宽度设高度
+
+clear 清除浮动
+
+设置有边框的元素技巧：
+父级不要设置宽高  用子集元素撑开
+再用padding设置内边距 
+设置background-color；
+然后由于有一个a标签包裹img的bug
+所以在img上加个vertical-align

@@ -1,0 +1,58 @@
+正则表达式里面全是字符串
+构造函数定义正则表达式：
+	var reg1 = new RegExp("hello","i");
+
+.test()可以检测test参数是否符合正则表达式
+
+字面量定义正则表达式:
+	var reg2 = /hello/i
+/i是不区分大小写
+
+.  除换行和回车以外的任意字符
+可以/..n/ 表示取到n加上前面的2个字符
+
+字符串常用方法:
+match 
+replace
+search 不支持/g 直接忽略 只能找第一个
+
+克隆节点
+
+new Date().toLocaleDateString()
+
+前标^ 后标$
+两个一起用就是必须是内容一样的
+^在[]里面表示取反
+
+()的优先级仅仅低于转义符
+（在括号里加一个| 竖线表示或）
+
+[ 中括号里面表示一位数 ]
+
+$可以反向引用
+var reg = /(\w)\1(\w)\2/g  \1是引用第一个字符
+然后可以用$1进行调用
+
+str.trim()是存在兼容问题的
+
+window.onbeforeunload 浏览器关闭之前
+并不是之间点关闭 而是时间触发了
+window.close()之后才会触发
+
+conment.cloneNode()  克隆元素
+如果cloneNode(true)里面是true则克隆包括子元素
+
+toLocaleString更改 new Date样式
+
+注意:replace方法不会改变原字符串
+
+test的用法： 在num的规则下value是否符合
+num.test(value)
+
+innerHTML不单单可以取到标签内的内容
+还能更改内容
+
+相比nodeValue，nodeValue只能获取文本节点
+
+因为replace是创建一个新的字符串 所以可以用
+innerHTML = replace使用 然后实现更改样式

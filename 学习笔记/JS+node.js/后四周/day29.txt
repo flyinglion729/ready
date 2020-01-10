@@ -1,0 +1,18 @@
+箭头函数能继承上一个this的指向
+不会无端端改变this指向
+
+在面向对象中，如果希望函数中的变量能被
+class类以内的其他函数访问到
+在用箭头函数保持this指向一直是实例化对象
+的前提下使用this.xx = xx;来设置变量
+
+cookie能在一个服务器内被记录然后被使用
+
+localStorage 是属于浏览器的对象
+可以让整个文件夹内使用
+设置键值对
+localStrorage.aa = 1;
+localStrorage.setItem("bb",23)
+键值对都是string类型 就算传数组也会变成
+string类型
+删除键值对

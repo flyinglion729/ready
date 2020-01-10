@@ -1,0 +1,49 @@
+Bootstrap 文档
+
+JS也可以监听屏幕大小 做移动端 PC端
+
+为了适应各种屏幕大小 所以Bootstrap出来了
+
+js文件:bootstrap.js 不压缩
+ bootstrap.min.js压缩版
+
+ie浏览器不能直接打开boostrap
+
+CDN加速服务 每个地方的服务器上线之后
+没办法全国分布 所以有CDN可以实现各个地方
+访问速度加快
+
+link后面要加rel
+.container 版心的作用
+所有的容器都有15Px的padding
+.row可以补掉15px的padding
+栅格系统
+row.md中屏能管大屏  小屏能管大屏
+
+列里面还能嵌套列不过也要加一层
+row  而且也是12列
+
+组件
+
+data- 指的是JS 部分
+
+promise函数 针对多次调用回调函数形成的回调地狱
+所设置的函数
+
+var promise = new Promise(function(resolve,reject){
+	setTimeout(function(){
+		var a = Math.random();
+		if(a>0.5){
+			resolve("我进入了a")
+		}else{
+			reject();
+		}
+	},3000)
+})
+promise函数更像是一个容器，里面放着一个将来
+会完成的事情，当new执行的时候会立即执行
+如果需要连续回调，在外面的div.then(function)
+里面使用return 将继续调用的函数返回就能回调
+
+用PHP查询功能时才使用
+mysqli_num_rows

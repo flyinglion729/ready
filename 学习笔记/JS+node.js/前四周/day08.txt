@@ -1,0 +1,69 @@
+对象键值对的遍历
+
+for (key in obj){
+	key是属性名
+	obj.key是取不到属性值的
+	需要加上[]
+	obj.[key]
+因为对象中的键是默认有“”的虽然没显示出来
+所以要加[]
+
+
+字符串方法：str.toLowerCase() 统一转小写
+	str.toUpperCase() 统一转大写
+
+this指向:
+如果是对象方法中的this指向对象
+（方法的调用者）
+function里面的this 指向window
+
+String.fromCharCode(Unicode码) 字符串方法
+能根据unicode码返回一个字符串
+str.trim()去除字符串两边空白
+
+Math 方法
+Math.max 取最大值
+Math.min 取最小值
+Math.pow（x，y） 取x的y平方
+
+字符串转数字
+parseInt(str,16) 默认10进制
+
+Date对象
+var date = new Date();默认当前时间
+可以加引号
+new Date("2019 2 5 12:12:23")
+new Date(2019,2,5,12,12,23)
+如果不加引号是按0月开始算一月
+var date = new Date();
+date.getFullYear() 获取年份
+date.getMonth() 获取月份（月份从0开始算）
+date.getDate()获取天数 按月份的天数
+date.getDay()获取周数 从0-6
+date.getHours()获取小时
+date.getMinutes()获取分钟数
+date.getSeconds()获取秒数
+
+获取距离1970年1月1日的毫秒数的两种方法
+var date = new Date();
+console.log(date.getTime());
+
+console.log(Date.parse("2019-5-8 12:14:20"))
+
+计时器：
+setInterval
+var timer = setInterval(function(){
+	console.log("起床");
+},1000) 1秒钟一次执行
+
+关闭定时器
+clearInterval(timer);
+定时器可以叠加（需要清除）
+
+document.getElementsByTagName("*");
+选中页面上的所有标签
+是一个数组
+
+sub()字符串显示为下标
+sup()字符串显示为上标
+

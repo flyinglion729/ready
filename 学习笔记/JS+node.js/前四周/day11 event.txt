@@ -1,0 +1,129 @@
+this:
+函数中function this指向window
+事件函数中 this指向事件源
+
+同步和异步
+
+事件函数是异步：onclick
+时间函数setTimeout  也是异步
+当主程序中的简单程序执行完之后才会执行
+不会执行但是会设置定点
+
+事件对象
+记录事件的细节的对象叫事件对象
+注意:只有事件发生时才会产生事件对象event
+event事件对象兼容问题:
+mark.onclick = function(){
+	console.log(window.event)是兼容IE的写法
+}
+mark.onclick = function(e){ //任意第一个参数都会认为是event
+	console.log(e)//兼容火狐的写法
+}
+谷歌两个方法都支持
+兼容写法 var event = window.event || e;
+
+clientX/clientY 鼠标距离；浏览器可视区域的距离
+没有兼容性问题（注意是可视区域）
+event.clientY
+
+pageX/pageY 鼠标距离页面距离(不是可视区域)
+IE8及以下不兼容
+兼容性方案:
+var pageY = event.clientY + scroll().top;
+//scroll是自己封装的兼容性滚动函数
+
+元素距离页面的距离:（和事件不相关）
+mask.offsetLeft  距离页面左侧距离
+mask.offsetTop 距离页面顶部距离
+(元素距离有定位的父元素距离)
+
+鼠标事件：div.onmousemove 
+在元素上移动鼠标会触发
+
+鼠标事件：onmouseleave  onmouseout
+鼠标离开触发
+onmouseover  onmouseenter
+鼠标进入触发
+onclick 鼠标单击 ondblclick 鼠标双击
+onmousedown,onmouseup 鼠标点下，和鼠标抬起
+
+event.button属性
+点击左键 button:0
+点击中键 button:1
+点击右键 button:2
+
+事件对象
+event.offsetX  火狐不兼容
+所以兼容性
+event.offsetX||event.layerX
+获取最靠近鼠标的位置的坐标（容易出错）
+不建议使用
+
+event.screenX  鼠标距离电脑屏幕的x坐标
+（实际编程的时候没啥用）
+
+onkeydown 键盘按下
+onkeyup 键盘抬起
+获取按下字符的编码 event.keyCode||event.which
+可以通过 String.fromChatCode() 返回按下的键
+
+组合键
+ctrlkey
+altkey
+shiftkey
+可以判断是否按了对应的键
+
+绑定事件的方法:
+事件监听器:同一个事件多次触发
+不会与同类的事件发生冲突
+div.addEventListener("click",function(){
+	console.log(1);
+},false) IE8及以下不支持
+
+div.attachEvent("onclick",function(){)
+
+冒泡 事件的机制
+如果给body绑定了一个事件，就算没有点击到body里面
+只是点击到body里面的子元素也会触发事件，即使是
+子元素飞到天边，形象上已经不在body里面了
+
+也就是说点击了body就算点击了body的子元素
+
+子元素发生的事件，会冒泡到父元素上，并会一直往上冒
+冒泡的方向是由目标元素往上级
+
+son.addEventListener("click",function(){
+	console.log("son被点击了")
+},false) 监听事件的最后一个参数指的是捕获还是冒泡
+false为冒泡  true为捕获
+
+事件分为三个阶段:先捕获 目标元素 冒泡
+所以优先寻找捕获对象进行排序 再到目标元素
+最后再到冒泡对象排序
+
+阻止冒泡的方法：
+1、在需要冒泡截取的点设置一个事件
+event.stopPropagation();就能阻止继续冒泡
+p.onclick = function(e){
+	var event = window.event||e;
+	event.stopPropagation();
+}
+但是event.stopPropagation()方法在IE上不兼容
+event.cancelBubble = true;    IE浏览器可使用
+
+innerHTML会将父元素里的子元素进行覆盖
+
+offsetX : 鼠标在最近一个元素里的位置
+(存在兼容：火狐兼容event.layerX）
+offsetLeft: 元素离左边页面的长度
+offsetWidth:元素的宽度
+
+mouseover 进入元素 mouseout 离开元素
+mouseenter 进入元素  mouseleave 离开元素
+
+使用children选择器选择table表单元素的时候
+注意table自带一个tbody的标签 需要先选择
+children[0]然后再加一个chilren[1]
+
+需要多个事件委托的时候就使用事件监听
+addElementListener("click",function(){})

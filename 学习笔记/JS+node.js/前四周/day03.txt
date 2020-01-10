@@ -1,0 +1,41 @@
+斐波那契数列
+
+99乘法表: 
+var i = 1;
+var str = "";
+for(j=1;j<10;j++){
+	str = str + i +"*"+j+"="+j*i+"\t";
+}
+console.log(str);
+用str包起来能把所有数字打横
+
+continue和break
+break 跳出本次循环体
+continue 退出单次循环
+
+复杂数据类型:
+数组 array 多个元素放在一个集合里面;
+array.length 可以获取数组内元素个数
+最后一个下标是 length-1;
+
+取数组中的元素最后一个元素:
+console.log(totalName[totalName.length-1]);
+二维数组: 数组里面可以套数组
+变量别取简单的name之类的 不然会显示不出来
+
+数组遍历
+
+数组新增元素
+arr[2] = "china"
+
+求数组最大值 最小值	(自我赋值的过程)
+
+存在字符串里要加空串
+var str = "";
+
+在数组的最后新增元素:
+newArr[newArr.length] = 3;
+
+冒泡排序:
+逐个对比 得出最大值放后面
+

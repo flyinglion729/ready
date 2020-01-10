@@ -1,0 +1,130 @@
+js里使用DOM的class是需要用className
+li1.onclick = function(){
+	li1.className = "hen"
+}
+JS实现的轮播图可以把每个按钮单独设置function
+然后用for循环轮流启动各自的function
+但是for循环不能放进function里面
+在函数里面使用事件不用return
+
+用JS写轮播图的两种方法。
+第一种是只有一个img标签,通过更改img的src
+第二种是多个img标签，通过更改位置实现
+
+事件不要一个套一个，容易出BUG
+
+系统内置对象
+window
+window.location(BOM)
+Math
+
+特殊标签获取方法:
+body标签
+document.body;
+document.head;
+document.title; 会显示title的内容
+
+数组的定义方法：
+var arr1 = Array(1,2,3,"hello");数组有多个元素
+var arr2 = Array();空数组
+var arr3 = Array(10);表示数组的长度
+var arr4 = Array("10");数组只有一个参数就是字符串10;
+
+数组的一些常用方法
+增  删   改   查
+
+数组增加：
+1、从前面增加 arr.unshift("我在最前面");
+是改变原来的数组，返回值是数组的长度
+2、从后面增加 arr.push("我在最后面")
+是改变原来的数组，返回值是数组的长度
+
+数组删除：
+1、删除数组最前面的一个，在原数组上修改
+返回值是被删除的元素:arr.shift();
+2、删除数组最后面的一个，在原数组上修改
+返回值是被删除的元素:arr.pop();
+
+var arr = new Array(2,3);标准写法前面写new
+
+splice方法:两个参数和三个参数
+删除 增加 
+arr.splice(第几位开始,删除几位)
+直接在原数组操作，返回值是被删除的数组
+arr.splice(下标,删除的长度,替换的新元素)
+
+concat方法:连接多个数组
+返回值是连接成功的新数组,原数组不变
+
+join方法:把数组变成字符串 还有分隔符
+arr.join()//不加参数 默认逗号
+arr.join("")//空串就没有分隔符
+
+注意：数组删除建议从后往前删除 不然删除了一个元素
+之后的下标会发生改变
+
+sort 排序方法:
+默认值会按编码排序，转换为字符串排序;
+sort(里面有规则)
+一般使用 arr.sort(function(a,b){
+		return a-b;升序
+		return b-a;降序
+
+
+
+字符串方法:split 把字符串变成数组
+str.split("-")指定-为分隔符将字符串分隔为数组
+str.split("")完全拆开字符串
+
+翻转数组:reverse
+返回值是翻转后的数组，翻转是在原数组操作
+
+indexOf()方法:查找元素的位置
+第一个参数是：要查找的数据
+第二个参数是：从什么位置开始查找，默认是从0开始找
+返回值：查找到第一个符合条件的元素索引，如果没有
+符合条件的，返回-1
+但是会有兼容问题 IE6-8 不兼容
+
+lastIndexOf()方法:从后往前
+
+
+数组的遍历:
+for in 循环
+forEach 循环
+map 遍历
+filter 遍历
+
+for in 循环用于遍历数组单个元素而且能获得下标
+for(var index in arr){
+	函数内容
+}
+
+
+
+
+ES5新增属性 有少许兼容问题:
+
+forEach循环用于遍历数组的同时每个元素使用一次
+function，没有返回值
+arr.forEach(function(value,index){})
+
+
+map循环和forEach循环差不多
+但是如果有返回值return 每次的返回值会
+成为一个新的数组 就是map的返回值
+arr.map(function(value,index){}
+
+filter循环 用于数组过滤
+前面和forEach、map一样 每个元素都执行一次函数
+如果返回值为true就会进入新数组 false就不会
+返回值就是新数组
+var newArr = arr.filter(function(value,index){
+	if(value > 200){
+		return true;
+	else{
+		return false;
+	}
+newArr就是大于200的新数组
+
+当顺序删除会导致原数组下标变化时，使用逆向顺序

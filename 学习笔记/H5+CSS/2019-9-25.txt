@@ -1,0 +1,15 @@
+图片整合
+
+border-radius:左上右下 。右上左下
+ 三个值
+
+0 0 0 0/0 0 0 0 前四个表示x的边
+	      后四个表示y的边
+
+胶囊形状 高度的百分之五十
+transparent 背景色透明
+
+ctrl +e 合并图层
+
+块状元素block 可以用margin：0 auto；居中
+line 和 line-block 可以用 text-align居中

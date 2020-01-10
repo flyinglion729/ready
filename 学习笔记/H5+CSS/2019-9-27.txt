@@ -1,0 +1,27 @@
+浏览器 
+
+IE6 常见bug
+1、a标签嵌套img标签会有自带边框
+解决办法：在img里加一个border:0
+
+2、div盒子里嵌套一个img会在底部留有
+多出几像素的间隙
+解决办法:在Img上加一个
+vertical-align: top属性;
+或者加display:block
+
+3、ie6双倍浮距
+
+4、ie6/ie7 默认高度
+
+5、表单行高对齐不一致
+
+6、ie6 50%bug
+
+7、ie6透明属性
+
+8、ie6浮动bug
+
+9、给子元素加margin-top会给父元素加上
+
+cursor:pointer 手型指针

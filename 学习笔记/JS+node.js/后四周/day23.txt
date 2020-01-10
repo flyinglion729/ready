@@ -1,0 +1,62 @@
+局部刷新页面
+
+表单的默认action 一定会跳转页面
+所以不使用表单的默认提交
+
+利用ajax 利用js 发送异步的http请求
+可以实现局部刷新功能
+var xhr = new XMLHttpRequest;
+
+setcookie 浏览器设置一个cookie
+
+在语法里引用参数要加小括号
+
+在获取服务器响应的时候，由于服务器做出响应
+需要时间，所以我们需要监听服务器响应状态
+onreadystatechange 是监听XMLHttpRequest
+的状态
+
+cookie有时效性，所以需要人为的加上时间
+setcookie("名字",值,time()+24*60*60)
+time()是当前的秒数一顿操作之后为当前延后的一天
+
+百分比转换成常见的中文:
+decodeURIComponent()  JS语法
+中文转换成百分比:
+encodeURIComponent()  JS语法
+
+同一个文件夹里就是一个域
+cookie可以进行读取
+
+前端也可以设置cookie
+document.cookie 可以读取当前域的cookie
+而且还可以进行写入
+document.cookie = "username = baobao";
+
+转换为cookie值的中文是百分比码
+所以需要转码
+
+服务器存储数据可以用cookie
+前端存储数据用本地存储localStorage可以存很久
+类似一个记事本
+删除键值对使用
+localStorage.removeItem("age"); 删除单个
+localStorage.clear();  删除所有键值对
+本地存储适合做购物车
+
+当存储发生改变就会触发的事件
+window.addEventListener('storage',storageHandler);
+但是不能在同一个页面下监听
+
+利用JS发送异步的http请求可以实现局部刷新
+
+AJAX对象
+var xhr = new XMLHttpRequest;
+xhr.open('get','http://localhost/...?username'+unameInp.value
+xhr.send(null);
+xhr.onload = function(){
+	
+}
+
+AJAX get请求不需要设置请求头
+post必须设置请求头

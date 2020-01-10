@@ -1,0 +1,89 @@
+特殊的DOM节点
+document.body
+document.head
+document.documentElement   html节点
+document.title  新的title标签内容
+
+sort排序相当于冒泡
+
+对象
+属性名：属性值
+特征(属性） 和 行为（函数）
+
+对象可以通过构造函数来定义
+var list = new Object();
+
+对象增加属性：
+list.newStr = "很酷的"
+
+对象的注意事项：
+如果对象的属性名用[]
+表明括号里的内容按照正常的JS语法解析
+
+json 数据类型
+类似对象 但是严格按照双引号属性名
+可以做成数组
+
+遇到把值放进数组的循环不一定要用push
+可以借用第三个值var shu=0 然后shu ++
+
+var str = "<table>" 再用str +="</table>"
+最后用innerHTML能实现改变HTML
+
+简单数据类型：number string boolean undefined null
+复杂数据类型：object array function
+
+复杂数据类型里面存储的是堆内存的地址
+简单数据类型里面存储的是栈内存的值（真正的值）
+所以
+var num = [1,2] != var num1 = [1,2]
+
+字符串的方法和定义方法
+1、var str = "亲"
+2、var str = new String("hello")
+字符串的常用方法
+1、var arr = str.split(); 字符串变数组
+查找字符串中的内容:
+2、indexOf,   lastIndexOf  这两个方法在数组中
+会有兼容性问题，但是在字符串中没有兼容问题
+3、给定索引，查找该索引的字符
+charAt()
+4、给定索引，查找该索引的字符编码
+charCodAt() 返回值是数字类型 如果找不到就会
+返回NaN
+用途：可以用来检测字符串中有无数字之类的
+5、concat字符串合并 (不常用)
+6、字符串截取
+str.slice(截取开始的索引,截取结束的索引);
+包前不包后 [0,1)
+str.slice(0)只有一个值就是全部截取
+str.slice(0,-2)如果是负数就是倒数第几个
+str.slice(5,2)如果前面的数大于后面的数会返回 空
+
+str.substr(截取开始的索引，截取的长度)；
+str.substr(0)只有一个值也是全部截取
+
+str.substring(截取开始的索引，截取结束的索引)
+substring不支持负数 会打印所有
+str.substring(9,8)允许前面的数比后面的大，
+会智能调换位置
+
+严格模式
+例如1、 a = 1;会报错 一定需要var a = 1;
+2、参数不能取相同的名字:
+function fn(a,a){}报错
+3、this的指向一般为window，但是严格模式
+是undefined
+
+this在事件函数中指向事件源
+严格模式中undefined
+
+对象的一些方法：
+用in判断对象中是否存在某个成员
+console.log("name" in obj) 输入的结果true就是有
+使用delete关键字删除对象的元素
+delete obj.name
+
+实现输入关键字查找信息 用filter方法很容易实现
+数组的方法
+

@@ -1,0 +1,77 @@
+模块化
+AMD  CMD
+类似现在的es6 module 后来es6模块代替了AMD和CMD
+
+Object.assign(div.style,{
+	width:"600px",
+	height:"400px",
+}
+
+require.js的AMD模块化开发:
+
+1、在主页面html上插入
+<script src="./require.js" data-main="./index.js" defer>
+//require.js是AMD的包
+//data-main 里面的是需要引用的主程序的js
+//defer也是必须要加的
+2、需要被引用的模块抛出部分使用define
+define(   (function(){}()  )  放入立即执行函数里面
+3、需要引用的模块使用require接收或者define的同时接收
+require( [ "./a.js" ],function(a) { } )
+//引用第一个参数是数组，里面输入参数地址
+//引用第二个是函数，里面的形参按顺序是前面地址的数据
+4、如果需要引用的同时抛出
+define([ "a" ],function(a){         }
+
+defer 控制外部链接等HTML执行完之后再执行
+
+gulp工具:
+帮助在上线之前 压缩空格 等等
+
+能帮助将ES6语法变成es4/5
+
+第一步：
+创建一个gulpfile.js  名字不能变
+本地安装一个gulp 4版本
+
+gulp 四个关键方法:src dest watch task
+gulp.src()读取文件//src(./*.js)可以拷贝当前文件夹下的所有js文件
+		//或者src(./**)所有文件复制
+.pipe(gulp.dest())导出文件//拷贝出来,没有重命名能力
+
+gulp.task("项目名随便起",function()
+在命令行调用 gulp xxx
+
+合并文件gulp-concat 
+
+es6转es5 
+gulp-babel
+
+自动加载插件
+遇到-驼峰命名
+
+静态服务器搭建 browser-sync
+
+任务依赖
+gulp.series(任务1，任务2，任务3),
+
+gulp.watch  时刻监听
+
+browser.reload() 重启服务器
+
+能操作数据库的才是动态服务器
+
+模块化的思想：
+1、ES6 的module
+2、node.js 的common.js //module.export..
+3、require.js 的AMD  //define...
+4、gulp
+
+Object.assign(div.style  ,  { width:'22px',height...})
+//对象合并 第一个参数是最后被合并的对象 后面都是合并在第一个参数
+
+如果把构造函数里面的this div = fn();
+执行放在里面 ，在实例化的同时就会执行fn函数
+
+series 线性执行
+parallel 合并执行 

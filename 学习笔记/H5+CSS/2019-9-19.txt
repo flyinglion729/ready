@@ -1,0 +1,64 @@
+CSS的核心属性和浮动
+font-size px em
+
+font-family 字体 可以设置多个字体类型
+
+font-weight： 字体加粗
+100-500 表示不加粗
+600-900 表示加粗
+normal值为不加粗
+
+font-style: normal(不倾斜)    字体形式
+	italic （倾斜）
+
+line-height 行高
+如果没有单位 是参考文字大小的倍数
+
+font复合写法 最低要求 font:20px "宋体"
+
+color 文字颜色 rgba
+
+text-transform:             字体大小写
+uppercase 文字全变大写
+lowercase 文字全变小写
+
+text-align 文本对齐
+center 中心对齐 两边会有间隔
+justify  中心对齐 两边的间隙会平分
+
+text-decoration:none  字体装饰
+	        underline 下划线
+	       overline  上划线
+	        line-through  删除线
+
+text-indent: 首行缩进 2em
+	可以取负值 让字体消失
+
+letter-spacing 字体间距
+
+word-spacing 词间距
+
+list-style 列表样式 
+list-style-type circle 空心圆 
+list-style-imge 
+
+border-style : solid 实线
+	     dashed 虚线
+	     inset 凹边
+	     ouset 凸边
+	     dotted 点线
+	     double 双线
+border-widh 线宽
+border-color 颜色
+border 一个值表示上右下左
+           两个值表示上下、左右
+           三个值表示上、左右、下
+
+background-image 
+background-repeat 平铺
+background-position:center left right 图片位置
+background-attachment:fixed
+		       scroll  背景图固定
+
+float 浮动
+清除浮动 父级设置 overflow:hidden

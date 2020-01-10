@@ -1,0 +1,44 @@
+php文件放在html哪里都行
+因为只是显示出来
+除了CSS
+
+不能多次创建多个数据库
+IP地址每一位都是0-255之间
+
+HTTP协议
+HTTP协议主要由请求和响应构成
+
+post请求有请求主体 
+get请求没有请求主体 都在地址栏
+get请求参数受浏览器对url长度的限制
+而post主体长度没有限制
+
+如果用户登录成功，服务器给客户端发一个
+cookie
+
+time()是当前的秒数
+只要index.php接到了cookie
+下面所有的文件都能响应到cookie
+
+cookie有大小限制，一般是4k,根据浏览器不同
+稍有不同
+cookie一般可以写50条足有
+cookie有访问限制,只能同域访问
+
+前端通过表单传递数据给后端：
+用form表单 action 属性是为了跳转页面
+然后里面input的name属性一定要填写
+因为传递过去的数据是
+?name = xxx(填写的内容)&name = xxx
+
+form表单method是控制get/post的传递方式
+
+后端接受前端数据，在php里面使用
+$_GET接受get传值
+$_POST接受post传值
+$_PEQUEST接受get/post传值
+
+引入外部文件
+include和require 都可以引入外部php文件
+
+本地存储与服务器不挂钩

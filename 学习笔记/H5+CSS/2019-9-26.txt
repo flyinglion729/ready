@@ -1,0 +1,107 @@
+宽度自适应：
+1、块元素不设宽度 设高度
+2、当元素浮动，会自适应子元素总宽度
+3、当元素添加了绝对定位和固定定位
+    没有设置宽度 ，left和right同时设置数值
+	(relative不行)
+高度自适应：
+1、元素不设置高度时，默认会获取子元素总高度
+2、当某个元素需要根据浏览器窗口高度设置
+百分比时候，需将BODY，html设置高度
+height:100%
+body,html{
+	height:100%;
+}
+div{
+	background:#343;
+	height:30%
+}
+3、当元素添加了绝对定位和固定定位
+    没有设置高度度 ，top和bottom同时设置数值
+
+设置最小/大高度:
+min-height:默认高度  可以增加 子元素能撑开父元素
+max-height：最大高度
+	可以配合overflow:hidden；
+设置小/大宽度:
+min-width:（块元素会通栏显示）
+块元素设置了float之后会显示
+max-width
+
+ctrl+u可以打开网页源代码
+
+float的深入理解：(当display:none和绝对定位时无效)
+当内联元素设置了float之后会隐性的转换display
+相当于display:inline-block；
+
+div的默认高度和宽度都是auto
+但是如果float了之后相当于变成
+display:inline-block；
+
+过滤器:
+下划线过滤器_background 只有IE6和IE6以下能生效
+星号过滤器*background 只有IE7及以下版本生效
+\9 识别ie浏览器
+\0 识别ie8以上ie浏览器识别
+
+background:#c30 !important 权重正无穷
+
+最小高度的兼容问题:
+1、div{
+	width:200px;
+	background:#333;
+	min-height:300px;
+	_height:300px;
+}
+ie浏览器的高度和谷歌浏览器的最小高度一样
+所以兼容ie6及以下的浏览器
+
+2、
+	min-height:60px;
+	height:auto !important;
+	height:60px;
+
+
+高度塌陷解决方案：
+1、浮动元素最后加个div 
+设置DIV{ height:0;
+	clear:both;
+	overflower:hidden;
+
+2、伪元素选择器:(伪元素无法选中)
+div:after,
+div:before{
+	content:" "； 这个值一定要有
+最佳解决方案:
+.clearfix{
+	*zoom:1;
+}
+.clearfix:after{
+	content:"";
+	display:block;
+	clear:both;
+	height:0;
+	overflower:hidden;
+}
+
+
+visibility:hidden和display:none;
+保留原有位置            结构都没了
+
+}
+利用伪元素
+div{
+	position:relative;
+}
+div:after{
+	content:" ";
+	position:absolute;
+	width:1px;
+	height:14px;
+	background:#666666;
+}
+
+去除边框
+input{
+	outline:none;
+}

@@ -1,0 +1,39 @@
+表单补充
+input:hidden 隐藏表单
+
+select标签
+子标签为 option 
+
+表单字段集
+fieldset
+子标签 legend 给表单设置一个标题
+label 标签 能进行跳转到某个ID
+两种用法
+单独使用 label for="id" 文字 label 
+包裹使用 label for="id" 全部
+
+选择文件框
+
+新增表格应用 用CSS控制
+1、border-spacing 表格间距
+2、border-collapse:合并相邻单元格边框
+	separate（边框分开）默认值
+	collapse（边框合并）
+3、empty-cells :hidden 在单元格没有内容时隐藏表格单元格
+但是使用了2中的合并单元格之后失效
+4、table-layout:自动表格布局
+	auto 默认值 自动布局
+	fixed 固定表格布局
+5、表格列标题th 在所有的td列标题
+6、caption 表格标题
+会出现在表格的最上面
+7、数据行分组
+<thead></thead>表头
+<tbody></tbody>表体
+<tfoot></tfoot>表尾
+一个Table中，只能包含一个thead一个tfoot，但是
+可以包含tbody，而且三个元素都必须结合来用
+
+滤镜 IE独有	
+
+vertical-align:middle  设置元素竖直方向对齐

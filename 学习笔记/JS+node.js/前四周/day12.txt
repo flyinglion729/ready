@@ -1,0 +1,69 @@
+甄别ie678
+function(e){
+	if(e){}
+}
+使用e识别
+
+获取鼠标键
+但是谷歌是 0 1 2 
+ie 是 1 4 2
+
+浏览器默认行为
+阻止默认动作 
+1、a,onclick =function(){ return false}
+2、event.preventDefault();//IE不兼容
+
+阻止默认动作不等于阻止冒泡
+
+右键菜单: oncontextmenu = function(e){
+	
+}
+
+事件委托
+
+新表单事件oninput事件 文本框减少一个字符也会触发
+IE不兼容
+inp.onpropertychange = function
+
+留言发布和删除
+
+在a标签的href="javascript:;"就不会跳转
+
+虽然事件分三个阶段：捕获 目标元素 冒泡
+但是事件是默认冒泡的
+
+json数据
+ES6 ` ` 在返单引号里换行是允许的
+取json值
+使用${ 里面可以使用语法}
+可以再innerHTML中使用
+
+onmouseenter和onmouseleave不支持冒泡
+但是onmouseover和onmouseout支持冒泡
+是两个鼠标事件的唯一区别
+
+即使没有设置点击事件，点击这个行为还是存在的
+所以还是会有冒泡机制，也就成就了委托
+
+在很多相同的li的时候可以委托给ul
+
+右击事件 oncontextmenu 
+
+事件委托兼容
+var target = event.target||event.srcElement;
+
+阻止冒泡:
+if(event.stopPropagetion){
+	event.stopPropagetion();
+}else{
+	event.cancelBubble = true;
+}
+取消默认行为:
+if(event.preventDefault){
+	event.preventDefault();
+}else{
+	return false;
+}
+
+事件委托可以使用在被创造的元素外面，通过父级委托给子级
+在点击事件外面，因为a不存在，可以使用事件委托给上级

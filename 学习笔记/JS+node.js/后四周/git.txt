@@ -1,0 +1,47 @@
+git
+安装完成之后 配置个人用户信息和电子邮箱地址
+
+git add xx 推到暂存区 用. 表示全部文件
+
+git commit -m"本次提交的简要说明"  提交到git里面
+
+git diff 比较当前文件和暂存区文件的区别
+
+git rm xx --cache  删除暂存区文件
+//如果删文件夹 还要在后面加 -r
+
+git log //当前版本到最远的版本列出来
+
+版本回退 : git reset --hard Head //回到最新版本,返回文件到工作区
+	git reset --hard Head^ //回到最新版本前一个版本,如果两个^就是前两个
+	git reset --hard 版本号(5位数就行) //进行版本回退	
+
+git reflog //查看所有git版本
+
+git commit -m"xxx" --amend 撤销上一次提交 并将暂存区的文件重新提交
+
+git reset HEAD -- 文件路径  拉取最近一次提交到版本库的文件
+//注意--后面一定要加空格
+git checkout -- 文件路径 拉取最近一次暂存区文件
+
+新建一个.gitignore文件
+在里面填写需要忽略的文件名
+
+git status 看文件夹状态
+
+创建分支
+git branch 分支名
+git branch //可以查看当前分支
+git checkout 分支名 //切换分支
+
+合并分支
+git merge 分支名
+:wq 退出程序
+
+远程仓库
+git remote add one http....  网络地址
+git push one//传输的地址 master//传输的分支
+
+git clone 地址 就能下载gitHub代码
+
+XXS攻击

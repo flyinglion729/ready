@@ -1,0 +1,151 @@
+ES6全有兼容性
+
+直接调用json 因为json是对象
+直接用JS使用 json会使用 json.toString()
+是无法显示内容的
+
+对象转字符串  
+var str = JSON.stringify(json);
+
+把类似json的字符串转成json
+var json = JSON.parse(str);
+
+json一定要双引号
+
+let和const:
+1、let不能重复定义
+2、let没有变量声明提升
+3、let定义的是块级作用域、在哪里定义就只能在哪使用 只要在{}花括号里面
+就只能访问花括号里面
+for(let i = 0 )在for循环里面使用就只能在循环里面使用
+在for循环里的var i 外面也能访问
+
+const 块级作用域
+1、没有变量声明提升
+2、用const定义的变量是不能再被赋值的
+只能const a = 1;
+如果a = 1;报错
+3、可以取巧使用：const a = {}
+然后在 a.name = "张三";将属性塞进去
+
+箭头函数
+省略function
+var fn = ()=>{}   箭头函数属于表达式
+如果只有一个形参，可以省略括号
+var fn1 = a=>{}
+如果函数主体里面只有一句话,可以连花括号都省略
+var fn2 = a=>console.log(a);
+如果函数主体里面只有一句话而且是return,
+可以省略{}花括号和return
+var fn3 = a=>a;
+
+定时函数里面的this是指向window
+函数里面this也指向window
+但是事件里面this指向事件源
+对象里面的函数指向对象本身
+
+注意:箭头函数是不会改变this指向
+
+参数打包
+箭头函数没有arguments
+var fn = (x,...arr)=>{} x是第一个参数 
+		arr是参数数组
+
+函数的参数的默认值
+可以设置一个函数的默认值，当没有参数传入的时候也不报错
+function num (a=document.body,b="欢迎光临"){
+	console.log(a + b)
+}
+num()
+
+...arr是扩展运算符，能把所有可遍历对象都拿出来
+甚至可以将字符串转数组
+var str = "我是谁，我再哪"
+var max = [...str]
+console.log(max)
+
+解构赋值
+var arr = [11,22,33,44];
+var [a,b,c,d] = arr;
+
+数组的解构赋值能够进行克隆
+var a = [1,2,3]
+var b = [...a]
+数组合并也变得简单
+let d = [...a,...b]
+而且此方法还可以合并对象
+如果属性名有重复的会进行覆盖
+
+``反单引号也能做字符串
+`hellow${变量}`
+
+for of
+var arr = [11,22,33]
+可以直接拿到每个数组的值
+for(var value of arr){}
+不可以遍历对象
+
+Array.from(liArr); 能将类数组转成数组
+arguments 也能转换
+转换的类数组必须具有length属性，如果没有length属性
+转换后的数组是个空数组
+还能拆开字符串变成数组
+Array.from()并不改变原数组
+Array.from(需要改变的类数组,mapfn)
+第二个参数是新数组的map方法可用于遍历数组
+
+
+Array.from(a,b)
+
+set类型
+var set1 = new Set([2,3,4,3,2])
+返回值没有重复的 类似数组
+
+set的常用和属性
+set.add(23) 增加属性 返回值是新的set类型
+set.delete(46) 删除属性 返回值是布尔
+所以set.add(45).add(23) 可以连续调用
+set.has(14)判断set中是否含有某个值 有就返回true
+没有就是false
+set.clear() 清除
+
+symbol类型:是ES6引用的一种新的原始数据类型
+表示独一无二的值，最大的用法是定义对象的唯一属性名
+就算相同参数 也不相等
+可以用做隐藏键值对
+
+
+浅拷贝指的是只复制了地址，如果前对象发生变化也会跟着变化
+深拷贝就是完全复制
+
+要调用json 创建多个类似的框架 可以用innerHTML配合
+`${调用json[i].name}`
+
+做遮罩层的时候可以设置背景图片，通过background-position
+来定位做出好像穿透过去的假象
+
+设置图片移动的时候可以取鼠标的相反值达到和鼠标一起移动
+
+offsetTop的妙用：定位每个元素的offsetTop值-scrollTop值就能
+定位元素在页面的位置  简直优秀
+如果取绝对值 就能完全覆盖掉之前的元素 因为会出现负值
+
+封装的方法scroll()是不能给更改的 只能取值
+所以要记住document.documentElement.scrollTop = ...
+还有document.body.scrollTop
+
+在设置轮播图的时候ul可以直接设置成600%
+假如有6张图片的话
+
+想设置动画的时候 思考一下运动起来有哪些值会发生变化
+就可以反向推导出运动函数
+
+想要复杂的动态效果可以设置keydown的最后设置一个
+setTimeout 清除动画效果 让每一次都能启动动画
+
+ES6数组方法map(function(value,index,arr){})
+filter(function(value,index,arr){})
+forEach(function(value,index,arr){})
+value 为正在遍历的元素
+index 为当前元素的索引
+arr 为数组本身
