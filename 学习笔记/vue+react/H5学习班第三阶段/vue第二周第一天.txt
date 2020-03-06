@@ -1,0 +1,83 @@
+工程架构
+项目架构
+业务开发
+项目部署
+
+脚手架起步
+初始化：npm install @vue/cli -g  全局安装
+or
+yarn global add @vue/cli
+
+创建脚手架：
+1、vue create vue-project（项目名）
+2、按照上面指示启动run vue项目
+cd xxx文件夹
+npm run serve
+3、搭好服务器之后，或者拉取一个旧的项目
+先看read.md文件,和看一下package.json文件
+
+npm run build 上线之前打包的命令
+会打包成一个dist文件夹 里面的东西压缩好就
+可以给测试了
+里面一个.map的文件是静态资源的映射关系
+的配置文件
+es5也能识别
+
+打包之后的dist是静态资源，可以将index.html
+改下名字，放在public文件夹里就可以访问
+
+index.html会和src中的main.js结合进行渲染
+
+每次修改代码，页面都会刷新，因为有一个
+webpack打包做出的热更新
+main.js是入口文件
+
+生产环境是线上
+
+assets指的是项目里面使用到的静态资源
+public指的是服务器的静态资源，供服务器直接访问
+
+.vue 是一个组件
+一切都是组件，一个组件包括
+html css js
+
+在main.js文件里new Vue({
+	render:h => h(App),
+}).$mount("#app")
+//其中$mount("#app")是挂载的意思
+//是当实例化里面没有el这个选项的时候可以使用
+//相当于在new Vue里面使用el挂载，一样的
+
+Eslint 不按规范来就会报错
+是一套规范
+在package.json里面的eslintConfig
+会显示出来
+
+当var声明一个变量之后，必须使用，不然会报错
+也不能使用console.log()调试的语句
+
+ESlint 规则有三种管理模式
+error-2
+warn-1
+off-0
+在pack.json里面的rules里面使用
+
+sass的好处:1、可以使用变量，只需要改变变量就能改变全部
+2、可以更清晰的选中元素
+&代表当前元素
+3、可以导入全局的sass文件
+
+style里面加个scoped可以设置局部作用域
+template标签里面只能有一个根元素
+@可以代替，指的是src文件夹下
+
+用npm安装的时候-D代表仅在开发环境下使用，不会被
+带入生产环境，-S则表示会保存下来，包括在生产环境
+
+在脚手架上使用SASS的时候需要先用Npm进行-D的安装
+cnpm install sass-loader -D
+cnpm install node-sass -D
+最好用淘宝镜像安装，容易报错
+
+v-for循环一定要加:key 不然Vue会报错
+

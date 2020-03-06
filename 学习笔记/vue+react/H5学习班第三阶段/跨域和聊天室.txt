@@ -1,0 +1,76 @@
+webSocket
+是建立客户端到服务端的双向交互通信
+
+手动搭建聊天室:
+1、npm init
+
+2、npm install express -S
+
+3、用express建立一个服务器
+package.json里面建立一个nodemon的命令
+
+4、设置html主页静态文件，加入css样式
+
+5、安装webSocket的框架包socket
+npm install socket.io -S
+
+6、socket.io需要先引入node.js的http的模块
+
+7、不能用express的app监听
+设置一个connect事件
+
+8、在index.html前端部分引入一个
+socket.io.js
+在前端页面建立与后端的链接并监听
+
+9、前端往后端发送数据,
+设置一个订阅发布,后端接受到信息之后
+返回给前端
+
+10、每一个用户都给一个标识，来区别每个不同的
+用户
+
+11、服务端监听用户下线设置 disconnect
+
+12、前端设置消息更新的时候滚动条
+发生滚动
+
+
+如果静态资源访问成功就不会访问后面的代码
+append 可以识别标签
+
+WebSockets 是H5设置的新的聊天api
+
+跨域问题:
+同源策略CORS 协议、域名、端口都要相同
+只有浏览器才有这个限制 
+Postman 能够调用
+
+1、jsonp（后端配合）
+后端发送过来的数据为jsonp格式
+前端使用jq的dataType：jsonp 
+一定是get请求 包括jq的jsonp
+
+2、使用http-proxy-middleware中间件来实现代理
+直接用jq的ajax访问本地的地址中间件(就是自己新建的一个服务器)
+再由中间件访问目标地址
+本质上是通过自己的后台跨过了浏览器的同源策略
+来访问目标地址
+
+前端调用者其实是调用自己的路由同源下访问
+前端调用者是不知道访问的是什么数据 后端才知道
+
+
+3、CORS(后端来操作）
+向浏览器声明这条访问是安全的
+
+
+Token 规范:
+类似cookie 来代替用户识别 因为cookie不安全
+登录的时候
+后端根据账号密码生成一个token编码返回给前端
+然后前端将整个token编码一直带着发给后端请求
+数据
+前端可以讲token放在本地存储localstorage
+
+

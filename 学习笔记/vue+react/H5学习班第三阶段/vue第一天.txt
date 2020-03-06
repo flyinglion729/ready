@@ -1,0 +1,60 @@
+vue:渐进式框架，由浅入深
+
+响应式编程 组件化开发
+
+同一个页面可以放置多个vue实例
+要用el:xx进行挂载
+
+使用动态的数据 必须在data里面进行声明
+
+v-model 能够双向响应
+
+不可以绑定两个 v-model 和v- bind
+v-model是v-bind和@change的语法糖
+
+methods 放方法
+
+访问声明式变量data里面的变量，
+使用this.xxx
+
+有v-model就不能有value
+
+{{ }} 和v-text差不多 插入文本 但是{{ }}会多一步
+不识别html标签
+v-html识别标签
+
+v-once包裹的对象没有双向绑定
+
+v-bind: 动态绑定
+
+v-for="item in students"  遍历数组
+v-for = "(val,key,idx) of obj"  遍历对象
+
+v-if
+v-else-if
+
+v-if的显示和隐藏
+v-show也可以显示和隐藏
+v-if是整个标签消失，v-show是加个display:none
+v-if和v-for不推荐一起使用v-for比v-if有更高的优先级
+
+凡是涉及DOM操作的都是成本比较高的
+v-if会涉及DOM操作节点
+
+input事件
+
+v-model 是 :value="xxx"
+	@input="xxx"的结合
+**其中@input = function(e){ e.target.value能获取到这个值 }
+
+事件修饰符.stop 阻止事件冒泡
+
+class绑定
+:class="{active:isActive}"
+
+可以用this.bol = !this.bol 来处理切换问题
+
+可以用:class绑定一个样式{on:togger == 0}
+再用点击事件触发改变togger的值来实现
+点击后只触发当前的样式
+

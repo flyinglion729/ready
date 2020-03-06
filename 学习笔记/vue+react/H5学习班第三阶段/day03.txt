@@ -1,0 +1,42 @@
+app.js 文件
+
+readme.md文件
+//简洁描述
+
+路由注册
+
+res.render(渲染页面)
+将模板引擎注入里面
+ejs模板引擎
+
+一个路由访问一个资源
+
+BSR 和 SSR
+//前后端分离
+
+静态资源要放在public文件夹里面
+css js 等
+
+添加路由：
+1、在routes文件夹下添加文件 
+2、在app.js里面引用  并且使用路由文件
+
+***注意引用文件的路径 很多都是直接可以引用
+
+get请求是 req.query
+post请求是 req.body
+
+控制数据库:1、
+插入
+user.inserMany([{
+	
+}])
+
+res.send("script标签 alert密码不相等
+res.redirect() 刷新
+
+数据库拿不到数据要去数据库文件夹找
+
+路由的作用：一开始渲染views里的模板代码
+并且每次请求都要经过路由，并由路由响应给
+前端

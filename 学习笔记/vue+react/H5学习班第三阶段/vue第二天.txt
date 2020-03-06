@@ -1,0 +1,66 @@
+事件对象，在事件的最后一个参数
+用$event表示
+
+多加一个参数来实现函数复用
+
+数组的变异方法会改变原数组
+如果不是变异方法就不会改变原数组
+
+vue的生命周期:
+1、beforeCreate() app创建之前
+	//就是var app = new 之前
+
+2、created() app已经被渲染完成
+	//就是var app = new 之后
+
+3、beforeMount()  app挂载之前
+	//就是el:"#app"之前
+
+4、mounted() app挂载之后
+	//就是el:"#app"之后
+
+5、beforeUpdate() 在数据修改之前
+	//就是data:{}里面的数据改变之前
+
+6、updated() 在数据修改之后
+	//就是data{}里面的数据改变之后
+
+7、beforedestroy() 生命结束之前
+
+
+8、destroy() 生命结束之后
+
+
+掉借口操作放在mounted节点下操作
+定时器里面的this指向注意要改成当前不然会指向window
+
+一般在前面设置的定时器要在beforeDestroy
+清除定时器
+还有闭包也是一样
+
+$destroy 完全销毁一个实例，解绑所有指令和事件监听器
+
+生命周期11个
+
+深入响应式原理
+是利用Object.defineProperty定义属性
+加了get 和set的函数 
+set函数 是改变这个值就会触发
+get函数 是拿到这个数据就会触发
+这个过程是在created阶段完成的
+
+虚拟DOM (是一个json对象)
+是在beforeUpdata的时候使用
+一般是 mvc   model数据 view视图 control控制器
+但是现在是 m v vm(视图模型)  框架
+当数据变化之后，复制一份虚拟DOM 然后
+对比两份DOM使用Diff算法进行对比
+给出差别最小的部分用path给到真实的DOM
+
+vue里面v-html和v-text无法在input里面起作用
+
+****实现动态菜单，可以先在HTML页面把所有的结构
+搭好，还有样式，然后通过vue的v-for循环将一个
+放在data里面的动态声明的数组的值提取出来进行
+渲染
+

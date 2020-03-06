@@ -1,0 +1,121 @@
+jquery是直接改变dom元素
+vue是操作声明式变量data来控制dom
+
+全局组件
+Vue.component()
+局部组件
+var app = new Vue({
+	components:{
+	
+	}
+})
+不同的app不能使用各自的局部组件
+
+动态组件：
+<keepalive>保持组件的状态
+
+异步组件:
+异步加载组件，需要的时候再加载
+很重要
+
+Vue.mixin() 全局混入
+给全局其他所有组件都加入
+局部的能覆盖全局的
+
+过滤器 filters
+要用文本差值来写，
+{{ xxxx}}
+
+vue里面可以用dom操作
+ref可以获取dom对象
+$refs.input.value
+还可以访问到组件的data和methods
+父组件可以访问到子组件 
+
+减少ref的使用因为会刷新DOM
+浪费资源
+
+事件总线：兄弟组件之间通话
+
+vue的动画:
+transition
+
+父组件穿函数给子组件，子组件接收的时候
+type是 Function
+
+v-if v-else-if 是会刷新页面的
+但是v-show不会，会保留表单里面的数据
+
+切换组件的时候可以使用vue自带的动态组件
+ <keep-alive>
+      <component :is='comp'></component>
+ </keep-alive>
+:is="里面加子组件的组件名"
+里面绑定父组件的data就可以实现动态绑定
+
+异步加载组件：
+Vue.component("my-async",function(resolve,reject){
+	setTimeout(function(){
+		resolve({
+			template:`代码`
+		})
+	},2000)
+}
+
+局部混入:
+var mixin = {
+	create(){ console.log(xxx)  }
+}
+var obj = {}
+//当哪个组件需要这个声明的对象都可以用
+mixins引入，var的名字可以不一样
+var app1 = new Vue({
+      el: '#app1',
+      mixins: [mixin, obj]
+})
+data,生命周期都可以混入，混入了之后可以直接用
+就是自己的
+
+过滤器有全局的还有局部的
+只能在双花括号里面使用，或者绑定在v-bind中
+{{xxx | yyy}}  v-bind:id="xxx | yyy"
+xxx将以参数的形式进入yyy的函数里面，并且
+yyy返回值是最后的修改后的值
+
+在标签上绑定ref可以获取标签的dom值
+然后在下面用$refs进行控制
+$refs只能在父组件上使用，ref可以设置在子组件上
+或者普通标签上
+
+vue在进入和离开的动画过渡可以有自己的
+transition组件
+一般用v-if 和v-show触发动画
+1、利用vue自带的动画触发效果
+在css列表中加入需要变化的css效果，然后在
+Html标签上使用name加入属性名就可以了
+2、利用animate.css插件库实现动画效果
+也是在css上面加入需要变化的效果，然后在
+transition上面直接加入类名就可以了
+
+如果一个transition里面存在多个需要变化的元素
+进行切换显示的话
+要用mode属性进行先出去还是先进来的排序
+
+一个组件里面可以使用多个插槽slot
+用template标签里的v-slot:xxx分开
+下面的slot用name进行区分
+
+watch里面可以监听data和计算属性completed
+里面值的变化，watch里面放函数，函数名就是
+data或者计算属性的名字，然后里面第一个参数
+就是改变后的结果
+
+一般template渲染不出来很有可能是this指向问题
+查查看
+
+当你需要用父组件的data值来进行控制子组件的
+某些变化的时候，完全可以用v-model来进行控制
+子组件返回回去的this.$emit("input",xxx)
+xxx值能够直接修改父元素data里面对应的值
+非常方便
+

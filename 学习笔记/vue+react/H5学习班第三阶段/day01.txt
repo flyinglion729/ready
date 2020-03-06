@@ -1,0 +1,26 @@
+环境变量
+
+node -v
+npm -v 版本号
+
+dns 域名服务器
+
+pwd 查询当地路径
+
+端口号3000以上
+
+ipconfig 查看IP地址 
+
+乱码问题加个代码 
+res.writeHead(200, {'Content-Type':'text/plain;charset=utf-8;'})
+
+多次请求 
+
+pipe 管道流  
+
+express 后端框架
+
+-S 保存
+-D 
+
+uninstall 卸载

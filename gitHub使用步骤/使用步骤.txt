@@ -38,7 +38,9 @@ $ git config --global user.email "chenyanrui@1000phone.com"  //个人邮箱地�
 ****提交至gitHub仓库:
 1、将gitHub里面项目地址复制
 2、在需要推送的文件夹下打开base
-3、git remote add origin gitHub地址
+3、git add .
+	git commit -m "xxx"
+	git remote add origin gitHub地址
 	git push -u origin master  //上面一步是将网站地址改名
 			        //第二步才是推送
 

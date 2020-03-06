@@ -1,0 +1,39 @@
+组件化开发：
+Vue.component("my-button",{})
+
+html里面的变为script里面的
+
+两个以上的单词定义组件
+
+template使用的时候一定要有一个div包裹起来
+
+var app = new Vue({}) 这个是父组件
+Vue.component() 全局子组件
+props:{}能接收父组件传过来的值
+子组件也有父组件一样的methods、data等
+但是data传值需要用函数形式，不然复用的时候
+会导致参数一样
+data:function(){
+	return 	{
+			代码...
+		}
+}
+
+新增一个标签<template></template>
+这个标签用v-for循环的时候会自身隐藏不显示在
+html页面上
+
+子组件可以通过事件通信，给父组件传值
+this.$emit("自定义函数",传给父组件的值)
+父组件是以函数的参数接收
+change(a){ console.log(a)}
+
+父组件要放在最下面 子组件在上面
+
+在子组件上绑的值都是自定义的
+主要是为了接收父组件传递的参数
+直接传变成间接传
+<my-input :value222="user"></my-input>
+
+相当于在my-input标签上进行 value222更名
+然后再template里面使用这个名字

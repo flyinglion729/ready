@@ -1,0 +1,94 @@
+props里面的如果非必填
+要加default:""
+
+静态的就放在子组件的data里面
+动态就放在父组件里面
+checked 表单默认选中
+
+input事件只有在text里面
+单选和多选只有change事件
+
+span标签里面包裹复选框
+就不会换行了
+
+props里面接收值的属性名需要用小写，
+用大写就获取不到值
+
+自定义组件的时候
+:value="username" @input="change"
+能改成v-model = "username"
+注意 接收值value、还有@input就不能改了
+
+注意template里面的根目录不能够循环
+
+插槽:
+slot
+v-slot需要用在template标签上
+#代表v-slot简写
+如果slot不指定name 默认是default
+指定标签名
+但是slot里面的元素是在父组件里面
+组件库layout
+
+计算属性：computed
+计算属性也有单项绑定和data一样
+里面的函数和变量一样
+
+watch监听
+里面的函数名一定要等于data里面的名字
+就可以实时监听
+
+父组件一般用来初始化数据
+在template的模板循环里面都加上一个独立的
+id 便于查找
+
+***表单实现父子同步v-model的顺序是：
+1、父级传值给子集接收
+<my-radio @value="chec"></my-radio>
+props:{
+      value:{
+        type:String,
+        require:false,
+        default:"1"
+      }
+    },
+2、然后在template里面使用value，并绑定点击事件
+在子组件上面
+<div>
+       <input type="radio" name="666"  value="1" :checked='value == 1' @click="change">
+       <span>支付宝支付</span>
+</div>
+3、子组件触发点击函数：将当前值返回给父组件
+change(e){
+          this.$emit("input",e.target.value)
+        }
+
+<my-radio :value="chec" @input="change"></my-radio>
+4、父组件再用函数修改父组件的data里面的值
+
+但是上面的步骤可以用v-modue省略
+<my-radio v-model="chec"></my-radio>
+父组件不需要再设置函数修改自己本来的data
+但是子组件props里面必须用value
+还有this.$emit必须要用“input”
+
+在下拉菜单栏select里面 
+<select class="" name="" :value='value' @change='change'>
+          <option v-for='(ele) in list' :value="ele.id" v-text='ele.title'></option>
+</select>
+select的value是指默认选中的option值
+
+ES6新语法
+Array.find()和findIndex()
+find()就是查找数组中是否有这个值，返回第一个
+找不到返回undefined
+findIndex()就是查找数组是否有这个值，返回下标
+找不到返回-1
+可以查找到NAN 弥补了indexOf的漏洞
+
+在template里面的函数穿参数的时候，如果有多个
+参数而且还想穿事件对象时可以传$event
+@change = "chang(id,$event)"
+
+object.is(a,b) 对比两个值是否相等
+能够对比出NAN == NAN

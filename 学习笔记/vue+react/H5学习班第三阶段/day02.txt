@@ -1,0 +1,63 @@
+有数据库就是动态服务器
+
+exports.xx = function(){}
+//一定要加.xx 然后对方引用的时候也要加.xx才能正确引用
+
+module.exports = 对象或者变量
+//如果使用多个后面的module会覆盖前面
+//但是使用exports.xx就不会
+
+mangoDB和MySQL区别
+
+1、mongod --dbpath "D:\mongo\data" 启动数据库
+2、新开一个窗口连接数据库
+	第一种：在cmd输入mongo
+		show dbs;
+	第二种:  打开robo3新建一个库手动连接
+	//第二种方式不需要启动数据库
+mongodb 默认启动的时候会有三个数据库
+admin
+local
+config
+一般不会使用这三个
+
+mongodb数据基本上都是json
+
+mongodb没有表，是集合
+集合下面创建文档。一般都是json = 文档
+json中的键值对叫做 域
+
+_id为自动生成的主键
+
+mangodb每个文档的长度可以不一样
+mangodb存储数据为BSON，二进制的JSON
+
+mongoDB的数据类型
+
+help命令：
+db 知道当前数据库
+use 数据库名 //切换数据库
+db.stats() //查看数据库的内容
+db.dropDatabase() // 删除当前数据库
+show collections  //查看当前集合数
+db.createCollection("user")//创建集合
+
+集合中的文档操作:
+db.user.inserOne({}) //db是在当前数据库里的user集合插入文档
+//在{}里面的数据都要加双引号
+
+db.user.find() //查询一下数据库有没有增加文档
+
+mango查询模块:
+
+如果在命令行使用，一定要按顺序输入
+
+express阶段
+
+scripts里面的方法能直接在命令行使用
+npm xxx
+
+入口函数
+
+mongoose
+

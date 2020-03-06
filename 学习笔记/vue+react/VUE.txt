@@ -1,0 +1,75 @@
+创建脚手架： 全局安装vue-cli：
+
+npm install --global vue-cli 
+
+创建一个基于webpack模板的项目：
+
+vue init webpack +项目名
+       或者使用webpack-simple
+
+安装：
+
+cd 项目名
+npm install
+运行：
+npm run dev
+
+安装路由：
+
+npm install vue-router --save
+然后在main,js里面导入
+
+import VueRouter from "vue-router"
+
+Vue,use(VueRouter)
+
+const routes [
+	{path:'/',component:Home}
+]
+
+router-link路径to 是不区分大小写的
+
+如果只是使用router-view 可以用a标签作为接口 但是会实现跳转 影响效率 一般使用router-link to
+
+router-link 默认是以a标签在HTML中的 但是可以用 tag属性进行更改
+
+router-link:to='能导入动态的变量地址'
+
+{path:'*',redirect:'/'}
+
+路由属性跳转方法：
+1：跳转到上一次浏览的页面  this.$router.go(-1)
+2: 跳转指定的地址 this.$router.replace('/menu')
+3:跳转到指定的路由名字下this.$router.replace({name:'menuLink'})
+4:通过PUSH进行跳转 this.$router.push('/menu) 或者名字也行 this.$router.push({name:'menuLink'})
+
+二级路由的插入在 const routes:[
+	{path:'/about',name:aboutlink,component	:About, children:[
+		{path:'/histroy',name:histroylink,component:Histroy}
+]}
+]
+
+
+全局守卫设置：
+router.beforeEach（ （to,from,next）=>{
+	
+}）
+局部守卫设置
+beforeEnter:(to,from,next)=>{
+
+}
+
+在组件中插入守卫；  //在组件守卫中不支持this 要用next中的vm进行回调
+beforeRouteEnter:(to,from,next)=>{
+     next(v=>{
+      alert('hello world' + vm.name)
+})
+}
+
+弹窗设置 alert("内容") 只能按确定   confirm('内容')可以选择true 或 false
+注意事项：PATH路径这种东西要认真写
+
+vue实现监听滚动事件：
+mounted(){ window.addEventListener("scroll", this.handleScroll, true);}
+
+methods:{ handleScroll(){ console.log(scrollY); }}
