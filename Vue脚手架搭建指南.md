@@ -3,7 +3,7 @@ create kongLee by 2019/12/30
 Vue有两种安装方式
 * 在官网找到CDN的地址，用script引入
 * 用vue脚手架工程化安装
-* 附淘宝镜像:npm install -g cnpm --registry=https://registry.npm.taobao.org
+* 附淘宝镜像:npm install -g cnpm --registry= https://registry.npm.taobao.org
 ## Vue的脚手架搭建指南
 #### 如果第一次在电脑上使用vue，需要安装全局命令
 ```
@@ -23,6 +23,15 @@ npm install
 //将需要用到的模块进行下载
 npm run serve  或  npm start
 //然后启动服务器 npm start这个命令需要在package.json里面修改
+```
+* 注意：为了方便启动项目，在package.json里面设置一下启动命令
+```
+"scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "start": "npm run serve"   //就是加一行代码进行调用
+  },
 ```
 * 还有一个不常用的命令，用于修正ESlint规则的命令
 ```
@@ -433,7 +442,8 @@ actions: {
 * 获取接口需要axios的帮助:
 * npm 安装一下axios:
 ```
-cnpm install axios -S
+npm install axios -S
+注意这里最好用npm 因为这个axios用cnpm老是容易找不到文件
 ```
 * 然后直接使用以下代码获取数据:
 ```
@@ -471,7 +481,7 @@ module.exports = {
 import axios from "axios"
 
 actions:{
-	getMusic(){
+	getMusic(store){
 	        var url ="http://localhost:8080/soso/fcgi-bin/client_search_cp?ct=24&qqmusic_ver=1298&new_json=1&remoteplace=txt.yqq.song&searchid=57716835706115881&t=0&aggr=1&cr=1&catZhida=1&lossless=0&flag_qc=0&p=1&n=10&w=%E5%91%A8%E6%9D%B0%E4%BC%A6&g_tk=825386419&loginUin=857086010&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq.json&needNewCode=0"
 	        axios.get(url).then(res=>{
 	          console.log(res)
@@ -532,6 +542,16 @@ const second = {
 }
 
 export default second //最后记得抛出
+```
+* 然后在main.js里面挂载
+```
+import store from "./store/index";
+new Vue({
+  router,
+  store,
+  render: h => h(App),
+}).$mount('#app')
+
 ```
 * 然后在其他子组件中引用就变得方便很多了
 ```
@@ -862,22 +882,310 @@ export default {
 * 由于屏幕尺寸不一所以需要用rem为单位进行编写代码
 * 搭建vue-cli项目和PC端前面步骤一模一样，所以下面的步骤是接着往下
 * 在public静态文件夹下粘贴复制一个rem.js的文件,然后在index.html中的header引入
-```
-//具体的rem代码
-function resetRootFZ(){
-  var oHtml = document.querySelector('html');
-  var w = oHtml.getBoundingClientRect().width;
-  // 设置根字体的大小等于html节点的宽度的十分之一
-  oHtml.style.fontSize = w/10 + 'px';
-};
-
-resetRootFZ();
-
-// 当window窗口尺寸变化时，重新设置根字体的大小
-window.addEventListener('resize',function(){
-  resetRootFZ();
-});
-
-```
 * 由于需要用到rem为单位，所以在Vscode里面加入插件[](https://blog.csdn.net/wjnf012/article/details/92074232)
+* 按快捷键ALt+Z就可以将Px转化成rem
 * 接下来就开始编写代码了
+
+## 附vue服务端渲染SSR指南,回忆SSR和BSR
+* 新建一个文件夹，再用npm init创建一个Page.json文件
+* 然后再下载需要的vue模块和vue服务端渲染模块
+```
+//步骤如下
+npm init
+cnpm install vue -S
+cnpm install vue-server-renderer -S
+```
+* 然后复制官网的实例代码
+```
+const Vue = require('vue')
+const app = new Vue({
+  template: `<div>Hello World</div>`
+})
+
+// 第 2 步：创建一个 renderer
+const renderer = require('vue-server-renderer').createRenderer()
+
+// 第 3 步：将 Vue 实例渲染为 HTML
+renderer.renderToString(app, (err, html) => {   
+  if (err) throw err
+  console.log(html)
+  // => <div data-server-rendered="true">Hello World</div>
+})
+//本质上就是将vue实例化的template放在renderer进行渲染，变成简单的静态页面
+//此时在node环境下也就是cmd上node xxx 运行这个文件即可看到
+```
+* 然后就是和服务端进行集成，不过要引入node.js的框架Express
+* 服务器渲染SSR也有自身的一些缺点，因为渲染上去的是静态的HTML文件，所以
+* 首先，上面步骤一致，再加上一步引入Express
+```
+//步骤同上然后加上一步
+npm init
+cnpm install vue -S
+cnpm install vue-server-renderer -S
+cnpm install express -S
+```
+* 然后在文件里写入以下代码:
+```
+const Vue = require('vue')
+const server = require('express')()
+const renderer = require('vue-server-renderer').createRenderer()
+
+server.get('*', (req, res) => {  //这是路由
+    res.setHeader('Content-Type', 'text/html;charset=UTF-8');  //必须加这行代码，不然编译出来的html页面会乱码
+    const app = new Vue({
+        data: {
+            url: req.url,
+            quer: "这是测试能不能动态跳转的",
+        },
+        template: `<div>访问的 URL 是： {{ url }}<h1 v-text="quer" @click="change"></h1></div>
+        `,
+        methods:{
+            change(){
+                this.quer = "北京欢迎你" //注意：因为渲染上去是静态文件，所以动态的各种方法全都没用
+            }
+        }
+    })
+
+    renderer.renderToString(app, (err, html) => {
+        if (err) {
+            res.status(500).end('Internal Server Error')
+            return
+        }
+        res.end(`
+        <!DOCTYPE html>
+        <html lang="en">
+            <head><title>Hello</title></head>
+            <body>${html}</body>
+        </html>
+    `)
+    })
+})
+
+server.listen(8080)
+```
+
+## 附在Vue里面引入echarts组件:三种常用的全局引用方法，熟练之后也可以局部引用
+* 首先在当前vue脚手架根目录下安装echarts:
+* npm install echarts -S  最好采用npm 
+####  第一种方法是将所有需要用到的图标放在一个myEcharts.js文件中，然后绑定在Vue.prototype原型上
+* 先在utils文件下新建一个myEcharts.js文件，利用Object.defineProperties ES6语法封装好需要的图标
+```
+import echarts from 'echarts'
+const install = function(Vue) {
+    Object.defineProperties(Vue.prototype, {
+        $chart: {
+            get() {
+                return {
+                    //画一条简单的线
+                    line1: function (id) {
+                        this.chart = echarts.init(document.getElementById(id));
+                        this.chart.clear();
+
+                        const optionData = {
+                            xAxis: {
+                                type: 'category',
+                                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: [{
+                                data: [820, 932, 901, 934, 1290, 1330, 1320],
+                                type: 'line',
+                                smooth: true
+                            }]
+                        };
+
+                        this.chart.setOption(optionData);
+                    },
+                }
+            }
+        }
+    })
+}
+
+export default {
+    install
+}
+```
+* 抛出之后，在main.js入口文件中将文件进行绑定
+```
+import myCharts from './utils/myCharts.js'
+Vue.use(myCharts)
+```
+* 然后就可以直接在各个组件进行调用了
+```
+<template>
+  <div class="hello">
+    <div id="chart1"></div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'HelloWorld',
+  data () {
+    return {
+    }
+  },
+  mounted() {
+    this.$chart.line1('chart1');
+  }
+}
+</script>
+
+<style scoped>
+  #chart1 {
+    width: 300px;
+    height: 300px;
+  }
+</style>
+```
+* 但是以上的数据都是死的怎么办呢，如果需要动态渲染也可以将api里面的接口函数引入进行调用
+* 以下代码是上面代码的基础上加上一个接口调用
+```
+import echarts from 'echarts'
+import { getZjlMusic } from "@/utils/api"  //引入接口文件非常方便
+
+const install = (Vue)=>{
+
+    //下面就是调接口进行使用
+    const change = {
+        Xdata:[],
+        Ydata:[],
+    }
+    getZjlMusic().then(res=>{
+        console.log("res",res)
+        res.list.forEach((value)=>{
+            change.Xdata.push(value.sale_num)
+        })
+        console.log("change",change.Xdata)
+    })
+
+    //将调接口的数据进行使用
+    Object.defineProperties(Vue.prototype, {
+        $chart: {
+            get() {
+                return {
+                    //画一条简单的线
+                    line1:  (id)=>{
+                        this.chart = echarts.init(document.getElementById(id));
+                        this.chart.clear();
+
+                        const optionData = {
+                            xAxis: {
+                                type: 'category',
+                                data: change.Xdata  //举例使用这个数据
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: [{
+                                data: [820, 932, 901, 934, 1290, 1330, 1320],
+                                type: 'line',
+                                smooth: true
+                            }]
+                        };
+
+                        this.chart.setOption(optionData);
+                    },
+                }
+            }
+        }
+    })
+}
+
+export default {
+    install
+}
+```
+#### 第二种方法是将Echarts放在子组件，然后父组件调用接口或者参数传给子组件进行渲染
+* 首先在子组件使用Echarts
+```
+<template>
+  <div class="echart">
+      <div id="myChart" :style="{width: '300px', height: '300px'}"></div>
+  </div>
+</template>
+
+<script>
+export default {
+    props:{
+        Testchart:{   //获取父组件发送过来的数据
+            type:Array,
+            required:true
+        }
+    },
+  data() {
+    return {
+      TestchartChild:[], //自己再定义一个数组用于数据筛选
+    };
+  },
+  mounted() {
+    this.drawLine(); //需要在mounted中调用
+  },
+  methods: {
+    drawLine() {
+        this.Testchart.forEach((val)=>{   //将父组件发送过来的数据进行进一步筛选
+            this.TestchartChild.push(val.sale_num)
+        })
+      // 基于准备好的dom，初始化echarts实例
+      let myChart = this.$echarts.init(document.getElementById("myChart"));
+      // 绘制图表
+      myChart.setOption({
+        title: { text: "在Vue中使用echarts" },
+        tooltip: {},
+        xAxis: {
+          data: this.TestchartChild  //将数据赋值给图表,从而形成动态图表
+        },
+        yAxis: {},
+        series: [
+          {
+            name: "销量",
+            type: "bar",
+            data: [5, 20, 36, 10, 10, 20]
+          }
+        ]
+      });
+    }
+  }
+};
+</script>
+```
+* 父级传值的过程,在上面的组件的父组件需要调接口并且传参
+```
+<template>
+  <div class="center_list">
+    <EchartTest :Testchart="Testchart"></EchartTest>  //传值过去子组件
+  </div>
+</template>
+
+<script>
+
+const EchartTest = ()=>import("./Center_list/EchartT")
+
+export default {
+  data: function() {
+    return {
+      activeName: "1",
+      Testchart:[] //新建一个data数据用于存储调接口过来的数据
+    }
+  },
+  components: {
+    EchartTest
+  },
+  mounted(){
+    this.$http.getZjlMusic().then(res=>{  //在mounted中调接口将数据传入新创建的data里面
+        console.log("res",res)
+        this.Testchart = res.list
+    })
+  },
+  methods: {
+    
+  }
+};
+</script>
+```
+#### 第三种方法就是将所有调接口的数据放在Vuex中的actions里面进行使用
+* 然后图表单独设立一个子组件，例如上面的一样，然后调用Vuex里面的state数据进行渲染，具体就不写了，思路是这样的
+

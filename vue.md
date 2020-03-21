@@ -332,3 +332,37 @@ export const mutations = {
 * 如何把本地代码转移至远程服务器上？使用Git，或者使用其它文件上传软件。
 * 如何部署前端项目？使用Nginx
 * 什么是反向代理？什么是正向代理？
+
+## 技巧篇
+#### 如何用VUE写一个多个tab切换问题
+* 需要将每一个tab绑定一个点击事件，传入不同参数，然后动态绑定class类名，
+* 当某个值等于1的时候展示一个，某个值等于2的时候展示一个即可
+```
+<div class="tabs">
+        <div @click='tabClick("0")' :class='{"on": curTab=="0"}'>tab1</div>
+        <div @click='tabClick("1")' :class='{"on": curTab=="1"}'>tab2</div>
+        <div @click='tabClick("2")' :class='{"on": curTab=="2"}'>tab3</div>
+        <div @click='tabClick("3")' :class='{"on": curTab=="3"}'>tab4</div>
+      </div>
+      <div>
+        <h1 v-show="curTab=='0'">tab1 content</h1>
+        <h1 v-show='curTab=="1"'>tab2 content</h1>
+        <h1 v-show='curTab=="2"'>tab3 content</h1>
+        <h1 v-show='curTab=="3"'>tab4 content</h1>
+      </div>
+```
+* 但是如果使用Element.ui组件的时候，由于标签都是Element自己的标签所以要动用到事件对象event.target来实施
+* event.target.parentNode可以取到当前元素的父级元素，从而先遍历一次清除所有
+* 然后再重新用event.target获取元素赋值
+```
+methods: {
+      handleClick(tab, event) {
+        console.log(tab, event);
+        let parent = event.target.parentNode
+        for(var i =0;i < 3;i++){
+            parent.children[i].style.color="rgba(107,50,141,0.8)"
+        }
+        event.target.style.color = "orange"
+      }
+    }
+```

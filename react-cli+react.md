@@ -1719,6 +1719,7 @@ ReactDOM.render(
 #### 在组件中使用Router路由的四个组件
 * Route、NavLink、Redirect、Switch
 * Route能将路由的内容展示出来，NavLink和Link基本功能一样，但是能够更加灵活的切换样式，自带一个.active的样式可以设置
+* activeClassName可以更改.active为其他名称
 * Redirect是将路由重另向，例如首页"/"重另向为其他的路由，实现一跳转首页就显示某个组件
 * Switch的作用是当多个路由同时存在于Switch标签里面的时候只保留最后一个组件路由，用于跳转404页面
 * 注意！React路由中是无法自己跳转404页面的，需要在Switch最后的位置设置一个404页面
@@ -1751,7 +1752,7 @@ function App() {
 export default App;
 ```
 * public目录下的图片可以直接引用
-#### 如果需要使用sass需要安装两个包
+#### sass需要安装两个包
 * 安装: cnpm install sass-loader -S
 * cnpm install node-sass -S
 * 如果没有被Route嵌套的组件是没有路由切换的三个属性的，location match history
@@ -2971,6 +2972,7 @@ service.interceptors.response.use((res)=>{
 * 首先先安装这个包:cnpm install react-loadable -S
 * 然后在路由模块router文件夹下的index.js中修改
 ```
+import React,{Component} from 'react'  //一定要系上react
 import Loadable from "react-loadable"
 var Home = loadable({
 	loader:()=>import("../App"),   //异步加载这个组件
@@ -3099,4 +3101,47 @@ class One extends Component {
     }
 }
 export default One
+```
+#### 配置移动端rem自适应页面 (不一定成功)
+#### 如果不成功就使用Vue的方法
+* 首先先把需要的安装包下载下来
+* cnpm install lib-flexible --save
+* cnpm install sass-loader node-sass --save-dev
+* cnpm install postcss-px2rem --save
+* 然后在node_modules/react-scripts/config/webpack.config.js 文件下配置如下
+```
+...代码
+const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
+const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
+//移动端配置
+const px2rem = require('postcss-px2rem');  //增加这一栏 下面也要进行引用
+// @remove-on-eject-begin
+const eslint = require('eslint');
+const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
+...代码
+
+plugins: () => [
+            require('postcss-flexbugs-fixes'),
+            require('postcss-preset-env')({
+              autoprefixer: {
+                flexbox: 'no-2009',
+              },
+              stage: 3,
+            }),
+            // Adds PostCSS Normalize as the reset css with default options,
+            // so that it honors browserslist config in package.json
+            // which in turn let's users customize the target behavior as per their needs.
+            postcssNormalize(),
+            px2rem({ remUnit: 75 }), //增加这一栏
+          ],
+          sourceMap: isEnvProduction && shouldUseSourceMap,
+```
+* 然后在静态文件index.html中引入这个
+```
+<meta name="viewport" content="width=device-width,inital-scale=1.0,
+maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+```
+* 然后在程序入口文件index.js中引入
+```
+import 'lib-flexible' //注意 这个最好放最后引入 不然容易报错
 ```

@@ -1104,13 +1104,3 @@ class Logo extends React.Component {
 
 export default withRouter(Logo) //然后用witchRouter函数包裹class类进行抛出即可，就能使用到编程式路由的this.props.history等
 ```
-
-React脚手架上使用swiper
-bejson能够格式化json数据
-react-router 找到gitHub官网搜索
-router不但可以用于web开发,还能用于APP开发
-cnpm install react-router-dom -S 安装web路由
-dva React脚手架
-React的UI库 Ant Design
-安装 cnpm install antd -S
-* 路由的精确匹配 exact
