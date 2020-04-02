@@ -366,3 +366,124 @@ methods: {
       }
     }
 ```
+#### vue兄弟组件怎么传值
+* 首先，兄弟组件之间无法之间传值，需要用到一个共同的载体
+* 在assets文件夹里新建一个bus.js文件，实例化一个Vue
+```
+import Vue from "vue"
+export default new Vue
+```
+* 然后再在components里面新建两个兄弟组件One和Two
+```
+//在Two组件里，传值过去One组件
+<template>
+    <div class="two">
+        two
+        <button @click="get">点击传值</button>
+    </div>
+</template>
+
+<script>
+    import bus from "../assets/bus"
+    export default {
+        data() {
+            return {
+                msg:"我是谁"
+            }
+        },
+        methods:{
+            get(){
+                bus.$emit("change","我在哪")
+            }
+        }
+    }
+</script>
+```
+* 然后在One组件进行接收
+```
+<template>
+    <div class="one">
+        one
+    </div>
+</template>
+
+<script>
+    import bus from "../assets/bus"
+    export default {
+        data() {
+            return {
+                
+            }
+        },
+        mounted(){
+            bus.$on("change",(res)=>{
+                console.log(res)
+            })
+        }
+    }
+</script>
+```
+#### 路由的三种形式
+* 声明式跳转router-link
+```
+// two/后面衔接的是参数
+<router-link to="/two/123">点击跳转two</router-link>
+
+//然后再在router.js文件中更改/two路由的传参
+		{
+            path:'/two/:id'
+            component:Two
+        },
+//最后接收参数都是用this.$route.params进行接收
+```
+* 编程式路由传参，有三种方式
+* 第一种是和上述方法一样，但是都会有一个问题，传递的参数能在地址栏显示
+```
+//创建一个方法进行跳转
+<button @click="changeTwo">点击跳转two页面</button>
+
+methods:{
+            changeTwo(){
+                this.$router.push("/two/123")
+            }
+        }
+//然后在router.js文件中做同样的修改
+{
+            path:'/two/:id'
+            component:Two
+        },
+//最后也是通过this.$route.params进行接收
+```
+* 第二种方式是直接通过对象形式进行传参，比较常用，不会将传递过去的参数显示在地址栏
+* 而且不需要在router.js文件中做过多的修改，直接在params中可以取到
+* 但是需要在router.js文件中增加一个name属性，区分路由
+```
+//也是创建一个方法进行跳转
+<button @click="changeTwo">点击跳转two页面</button>
+
+methods:{
+            changeTwo(){
+                this.$router.push({name:"two",params:{"id":123}})
+            }
+        }
+//然后再在router.js文件中增加一个name属性
+		{
+            path:'/two',
+            name:"two",
+            component:Two
+        }
+//最后接收也是使用this.$route.params
+```
+* 第三种也不常用，通过字符串路径传参，会显示在地址栏，是通过query进行传递
+```
+//也是创建一个事件进行跳转
+<button @click="changeTwo">点击跳转two页面</button>
+
+methods:{
+            changeTwo(){
+                this.$router.push({path:"/two",query:{"id":123}})
+            }
+        }
+//然后优点就是不需要在router.js中进行过多的修改 可以直接在需要的页面
+//用this.$route.query获取到
+```

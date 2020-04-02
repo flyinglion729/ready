@@ -1,0 +1,4 @@
+flexible.js文件放在项目的js文件夹下，
+html文件，<script src="flexible.js文件路径"></script>
+有flexible.js文件，
+html中的meat标签需要去掉的话，
