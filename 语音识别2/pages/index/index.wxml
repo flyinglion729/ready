@@ -1,0 +1,22 @@
+<!--index.wxml-->
+<view class="container">
+  <view class="tallOne" wx:if="{{talk}}">
+    <button bindtap="testStart" wx:if="{{goStart}}">点击开始测试</button>
+    <view class="first" wx:else>{{firstWord}}</view>
+  </view>
+  <view wx:else>
+    <view>
+      下面由我宣读一下内容：
+    </view>
+    <scroll-view class="roll-y" scroll-y="true" scroll-into-view="{{rollId}}" scroll-with-animation="true">
+      <block wx:for="{{wordRoll}}" wx:key="index">
+        <view class="{{item.id===viocelist-1?'changeColor':''}}" id="rollId{{index}}">
+          {{item.title}}:{{item.text}}
+        </view>
+      </block>
+    </scroll-view>
+    <view>
+      请问您当前是不是正确的了解到该内容？
+    </view>
+  </view>
+</view>

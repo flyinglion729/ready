@@ -1,0 +1,9 @@
+/**index.wxss**/
+.roll-y{
+  overflow-y: scroll;
+  height: 200rpx;
+  background-color: orange
+}
+.changeColor{
+  background-color: green;
+}
