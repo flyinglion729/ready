@@ -4,5 +4,5 @@
 #### 搭建ios混合开发环境 
 * 使用的是hybrid app
 * 在windows系统下只能搭建android版本的app，但是在mac电脑上能搭建android和ios的版本app
-* 首先需要下载安装android原生的开发环境，下载android studio ，然后用一个夜神模拟器进行安装
+* 首先需要下载安装android原生的开发环境，下载android studio ，然后用一个夜神模拟器进行安装(可能要使用到翻墙工具)
 * 
