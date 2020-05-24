@@ -2161,7 +2161,7 @@ export default GetOne //最后将容器组件抛出即可
 * es6新方法reduce(prev,cur) 能够简单操作数组乘积，求和，甚至数组去重
 ```
 var num = [1,2,3,4]
-        let now = num.reduce((perv,cur)=>perv+cur)  //第一个参数是指前面那个数 第二个参数值当前的数 最后能得出求和的值
+        let now = num.reduce((perv,cur)=>prev+cur)  //第一个参数是指前面那个数 第二个参数值当前的数 最后能得出求和的值
         let now2 = num.reduce((prev,cur)=>prev*cur)
         console.log(now)
         console.log(now2)
@@ -2846,17 +2846,21 @@ changeColor(){
     }
 ```
 #### 封装axios调用后台数据接口
+* axios官网:[](https://www.kancloud.cn/yunye/axios/234845)
 * 在src文件下新建一个api文件夹，然后新建一个index.js文件，将axios进行封装
 * 其中请求拦截器是为了发送数据请求的时候能带上token方便用户辨认
 * 然后响应拦截器是为了减少获取数据难度，因为有些数据包裹很多层在外面
+* 这里封装之前还要安装一个数据转换器qs
+* cnpm install qs -S
 ```
 import axios from "axios"
 
 var service = axios.create({
-    baseURL:"/api",
-    "content-type":"application/json",
+    baseURL:"/chun",
     timeout:5000
 })
+axios.defaults.headers.get['Content-Type'] = "application/json"
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'; //区分post请求和get请求
 
 //请求拦截器
 service.interceptors.request.use((config)=>{
@@ -2871,11 +2875,19 @@ service.interceptors.response.use((res)=>{
 export default service
 ```
 * 然后再在同级目录下新建一个request.js文件编写入口文件
+* 注意，Post请求的时候要将传过去的参数再转换一下，如果是Get请求则axios会自动帮忙，post则不会
 ```
-import axios from "./index"  //引入已经封装好的axios文件
-
-export const getList = (page,pageSize)=>{
-    return axios.get("/pagelist",{params:{page,pageSize}}) //然后发送数据请求
+import axios from "./fetch"  //引入已经封装好的axios文件
+import qs from "qs"  //引入qs转换
+//注册接口名字
+// export const register = (params)=>{
+//     return axios.get("/register",{params}) //然后发送数据请求
+// }
+//注册接口名字
+//注册
+export const register = (params)=>{
+    console.log("params",params)
+    return axios.post("/register",qs.stringify(params))
 }
 ```
 * 如果涉及到跨域处理，需要在src文件夹下新建一个setupProxy.js文件进行配置
@@ -2883,12 +2895,12 @@ export const getList = (page,pageSize)=>{
 const {createProxyMiddleware} = require('http-proxy-middleware')
 
 module.exports = function(app) {
-    app.use('/hd', 
+    app.use('/chun', 
     createProxyMiddleware({ 
-              target: 'http://localhost:4000', //这里写代理的网站
+              target: 'http://192.168.1.110:8080', //这里写代理的网站
               changeOrigin: true, 
               pathRewrite:{
-                  "^/hd":"" //将/api更换成/
+                  "^/chun":"/" //将/api更换成/
               } 
             }
          ));
@@ -3145,3 +3157,7 @@ maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
 ```
 import 'lib-flexible' //注意 这个最好放最后引入 不然容易报错
 ```
+## 附HOOKS讲解
+#### 首先由最简单的useState开始讲解
+* useState处理了无状态组件中的状态问题，让无状态组件有状态
+* 使用方法也很简单，就是通过一个useState()的方法进行操作
