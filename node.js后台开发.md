@@ -60,3 +60,77 @@ Web服务的API 就是类似接口
 ```
 #### node语法
 * node的执行类似java,在命令行进入当前目录，然后使用node 文件名即可执行文件
+###### node模块化
+* 在node里面，每个Js文件的JS代码都是独立于文件之中的，换句话说就是每个Js文件虽然是全局作用域，但是也相当于是一个大的自运行的方法
+* 在这个方法里面使用变量需要暴露出去才能被别的模块使用到
+* ES5模块化引入
+```
+require("./nodefirst") //即可引入同目录下的文件 ,但是单单这样是无法访问当文件中的变量的，只能启动该文件中的自启动的代码
+```
+* 如果想要一个文件中的一个变量抛出，另一个模块接收可以使用exports和require
+* require进来的模块本质上就是一个对象，里面包含的就是引入文件中导出的部分
+```
+//抛出的模块one.js
+exports.x = "这是啥"
+
+//接收的模块two.js
+let md = require("./one")
+console.log("打印出来看看",md)
+```
+* node的模块分两种，和JS一样
+* 1.核心模块，直接使用require引入模块名即可，也叫引入模块标识
+* 2.文件模块，由用户自己创建的模块，向上面这种引入方式引入，需要加上路径
+```
+let fs = require("fs") //引入核心模块，直接填写模块名即可
+let math = require("./math") //引入具体的文件模块，需要加上文件路径
+```
+###### node在全局上声明的是局部变量
+* 在Node里面有一个类似window的全局变量叫做global，因为Node是后台语言所以没有window
+* 但是如果在全局里var 声明一个变量，该变量是一个局部变量，没办法使用global访问到，除非直接声明a = 1
+```
+var a = 1
+b = 1
+console.log("global",global.a)   // undefined   如果使用声明就会变成局部变量
+console.log("global2",global.b)  // 1      不使用声明就会暴露在全局变量
+```
+* 这是因为在node执行模块中的代码时，它首先会在最外层套一层如下函数，所以就算你在全局里声明一个变量，那个变量也是局部变量
+* 所以实际上node在指向的时候是将代码放在一个方法里面执行，并且在执行方法之前向里面传入了5个实参
+* 怎么验证你在全局变量里其实是在一个方法里面呢，可以使用arguments.callee 这个方法是指向一个方法中的自己
+```
+console.log(arguments.callee)
+//为了看清这个方法的真实情况 可以把这个方法变成字符串打印出来
+console.log(arguments.callee + "")  //这个时候就显示出最外面那层方法的样子了
+
+function (exports ,require,module,__filename,dirname) {
+	...具体代码
+}
+```
+* 其中，模块方法传入的这五个实参的用法如下
+```
+exports  		-- 用于将模块中的变量或者方法暴露出去
+require  		-- 用于引入外部模块
+module   		-- 代表当前模块本身，就是方法的本身，其中exports就是module的属性
+				-- 换句话说就是既可以使用exports导出，也可以使用module.exports导出
+				-- 但是不能将module理解成js的window，还是获取不到当前方法里的变量的
+__filename 		-- 当前模块或者说是文件的完整路径 "c:\user\....."
+__dirname		-- 当前模块的文件夹完整路径 就是__filename这个文件的文件夹路径，上一级路径
+```
+* 其中module.exports和exports还是有相当的区别的
+* 可以看做exports 是指向 module.exports 并不是exports本身有抛出的能力 所以当要抛出多个的时候优先选择module.exports
+```
+exports.xxx = "xxx" //只能单个单个的修改
+export = {
+	name:"asd"  //这样是会报错的，因为exports本身是无法抛出的，只是这个值是指向module.exports所以能够单个更改，但是多个更改就与
+}				//module.exports无关了
+//综上所述，如果需要抛出变量，优先直接选用module.exports
+module.exports = {
+	name:"孙悟空",
+	age:12,
+	getName:function(){ 
+		console.log("孙悟空")
+	}
+}
+//上面module.exports是可行的，所以优选module.exports
+```
+#### 小技巧
+* 如果想在某个文件夹下打开cmd，直接在文件夹的路径行输入cmd即可，路径就是当前文件夹下的路径
