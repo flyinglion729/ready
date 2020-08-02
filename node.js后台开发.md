@@ -151,7 +151,348 @@ test				---单元测试
 "main":"./xxx"   //这个是主文件，也是入口文件
 "maintainers" :    //表示这个包的贡献者，是可以多人的
 "name":     //这个是包的名字，当下载下来之后直接用require引入就是这个名字
+```
+* npm仓库也可以下载node的包，也是node的包管理网站
+* 在安装包的时候，和前端一样，也要先使用npm init创建出一个package.json文件才能把包使用npm install下载到当前文件夹中
+* 不然会下载到其他目录下
+```
+npm init
+npm install xxx    //即可下载所有的包 都会放在node_modules
 
+npm remove xxx     //删除某个包
+```
+* npm寻找包依赖有一个规则
+```
+node在使用模块名字引入包的时候，会首先在当前目录下的node_modules寻找当前的包
+如果一直找不到的话就会找上一级的node_modules，如果一直上级上级目录也找不到
+最后会找到磁盘的根目录下，如果磁盘根目录也没有，则报错
+
+let math = require("math") //如果当前目录没有这个包，则会一直往上一级寻找，类似作用域
+```
+###### Buffer缓冲区
+* 用户在请求数据的时候发送的都是二进制数据，所以后台必须要有一个值来缓冲一下二进制数据
+* 所以Buffer的作用在于，接收用户数据的使用作为一个缓冲区，而且响应数据的时候也作为一个缓冲区
+* Buffer缓冲区也可以是为了数组中存储的不足设置的，Buffer里面存储的都是二进制文件，所以可以存储类似MP4还有音乐和图片
+* 另外有一点要提醒的是，所有的二进制数据在计算机里面都会以16进制表示出来，因为二进制太长了，太占内存
+* 换句话说就是Buffer里面存储的都是二进制数据，但是显示就是16进制的
+* 使用Buffer也不需要引入模块，直接使用即可
+```
+let str = "我是谁，我在哪，我在干嘛"
+let buf = Buffer.from(str)
+console.log(buf)  //打印出二进制buffer文件
+
+str.length  //字符串长度
+buf.length  //Buffer中的长度是占用内存的大小，也表示多少个字节
+Buffer.from()  //将字符串转化成二进制的Buffer存进去
+//如果要把Buffer转换回来用toString即可
+```
+* Buffer中每个元素的范围都是00 - ff 就是是00 - 255
+* 因为Buffer本身就是存储二进制的文件，16进制表示二进制 ff表示的是11111111 刚好是二进制中这个数最大的值
+* 所以也可以理解成，Buffer最大的范围是 00000000 - 11111111
+* 也表示一个字节，一个字节表示8位二进制，传输数据的最小单位也是字节
+* 其中一个中文占3个字节，一个英文占一个字节
+```
+8bit = 1bytb (字节)
+1024bytb = 1kb
+1024kb = 1mb
+1024mb = 1gb
+1024gb = 1tb
+```
+* 创建一个固定长度的Buffer : Buffer.alloc和Buffer.allocUnsafe
+* Buffer的大小一旦固定，就不能改变，因为Buffer本质上是直接操控底层的内存，在底层的内存中占用一块连续的长度内存
+* 而且一旦存入超出最大值11111111的数会自动的保留后面8位，所以就不是原来的那个数
+```
+//创建一个10字节长度的Buffer
+let buf = Buffer.alloc(10)  //新建一个10个字节内存长度的Buffer
+//可以像数组一样，通过索引来控制Buffer
+buf[0] = 12
+buf[2] = 22
+buf[3] = 556   //已经超出了255 所以不会展示出556这个数，会保留二进制中的后8位
+console.log(buf)
+
+//除了Buffer.alloc可以创建一个固定长度的Buffer 还可以使用Buffer.allocUnsafe
+// Buffer.allocUnsafe创建一个指定大小的Buffer的同时，不会去清空这个内存之前的数据，所以可能会含有敏感数据，是之前保留下来的
+// 换句话说 Buffer.alloc这个方法在创建一个指定大小的Buffer的同时，会去清空之前的数据，所以性能会没allocUnsafe好
+let buf2 = Buffer.allocUnsafe(10)
+console.log(buf2)
+
+//如果需要读取buffer就像数组一样直接读取当前的索引即可
+console.log(buf[2])  //而且读取出来的数也是十进制的数
+//但是如果一定想要控制台打印出16进制的数 也不是不可以，可以转化成str即可
+console.log(buf[2].toString(16))
+```
+* 另外，Buffer和数组有很多相似的地方，也可以用来遍历和使用数组的一些方法 类似map之类的
+* 所以可以把Buffer当成数组去用即可
+```
+for(var i=0;i<buf.length;i++){
+    console.log(buf[i])
+}
+buf.map((item,index)=>{
+    console.log(item)
+})
+```
+###### fs模块，文件系统
+* node通过fs模块对文件系统的交互，包括打开，存储和写入等操作
+* 注意 fs模块中的所有操作都有两种形式可供选择，就是同步和异步
+* 同步文件会阻塞系统程序的运行，异步文件不会阻塞系统的运行，而是操作完毕之后通过回调函数将其结果返回
+```
+<!-- 打开文件 fs.open(path,flags)  path为当前文件地址，flags为打开文件后的操作r表示只读，w表示可写 -->
+<!-- 注意，如果使用fs.openSync("test.txt","w")当前没有这个文件，会创建出一个这个名字的文件 -->
+let  fs =  require("fs")
+fs.open()  			//异步打开文件
+fs.openSync()		//同步打开文件
+
+fs.write()          //异步写入文件
+fs.writeSync()      //同步写入文件
+
+fs.close()			//异步关闭文件
+fs.closeSync()      //同步关闭文件
+```
+* 同步的操作更好理解
+```
+let fs = require("fs")
+let fileNum = fs.openSync("test.txt","w")  //首先打开这个文件，如果没有这个文件会自动创建一个，并获取文件的独立编码
+fs.writeSync(fileNum,"今天的天气真不错",20,"utf-8") //然后通过这个独立的编码写入文件，第三个参数是开始输入的地方空出多少格数据
+													//最后一个参数是表示字符编码，默认是utf-8 一般不用改
+fs.closeSync(fileNum)					   //最后一定要关闭文件，不然容易占内存
+```
+* 异步文件写入，这也是Node的异步优势
+* 异步文件写入可以理解成是同步文件写入的同时加入了一个callback回调函数，而且异步文件是没有返回值的，不会返回fd编码
+* 但是会在回调函数里的第二个或者后面几个参数里面返回fd编码，然后在回调函数里面使用即可，异步操作会比同步操作更加高效
+```
+let fs = require("fs")
+fs.open("test.txt","w",(err,fd)=>{                         				<!-- 首先异步打开文件 -->
+    if (err) return console.log("打开文件失败",err)
+    fs.write(fd,"这是异步写入的文件",(err)=>{							<!-- 然后异步写入文件 -->
+        if (err) return console.log("写入文件失败",err)
+        console.log("写入成功")
+        fs.close(fd,(err)=>{											<!-- 最后异步关闭文件 -->
+            if (err) return console.log("关闭文件失败",err)
+            console.log("关闭文件成功")
+        })
+    })
+})
+```
+* node内部也封装了很多方法供我们使用，例如简单的文件写入就是其中之一
+* 简单的文件写入是fs.writeFile(path,data,options?,callback)
+* 其中可选项options是一个对象{},一般省略不写
+```
+let fs = require("fs")
+fs.writeFile("test","这是writeFile写入的内容",()=>{
+  console.log("写入成功")
+})
+```
+* 其中打开状态是可调节的，例如上面的fs.writeFile默认是"w",这个写入是每次都从头开始覆盖写入
+* 其他的打开状态可调节到自己想要的模式
+* 可以在options里面的flag:里面自行选择
+```
+<!-- 打开状态 -->
+r			---读取文件，文件不存在则出现异常
+r+			---读写文件，文件不存在则出现异常
+rs			---在同步模式下打开文件用于读取
+rs+			---在同步模式下打开文件用于读写
+w			---打开文件用于写操作，如果文件不存在则创建，如果存在则截断
+wx			---打开文件用于写操作，如果存在则打开失败
+w+			---打开文件用于读写，如果不存在则创建，如果存在则截断
+wx+			---打开文件用于读写，如果存在则打开失败
+a 			---打开文件用于追加，如果不存在则创建
+ax			---打开文件用于追加，如果路径存在则失败
+a+			---打开文件进行读取和追加，如果不存在则创建该文件
+ax+			---打开文件进行读取和追加，如果不存在则报错
+```
+* 如果想要写入其他地方的文件，可以直接更改path里面的配置，里面是支持绝对路径的，但是x\要注意用\\两个转义一下
+* 或者直接使用linxc里面的/这种斜杠也行
+```
+let fs = require("fs")
+fs.writeFile("G:\\Node学习\\test.txt","这是writessFile写入的内容",{flag:"a"},()=>{
+  console.log("写入成功")
+})
+
+<!-- 路径的第二种写法 -->
+G:/Node学习/test.txt"
+```
+###### 流式文件写入
+* 无论是同步简单文件写入和异步简单文件写入，一单涉及大文件写入就不合适，因为一次性导入文件太大了，性能太差，容易导致内存溢出
+* 所以出现了流式文件写入，简单理解就是，创建一个文件流，然后持续不断的慢慢写入，不影响其他操作，
+* 使用的方法是fs.createReadStream(path[, options]),写入只读流，fs.createWriteStream(path[, options]),写入可读流
+* 详情可看[](http://nodejs.cn/api/fs.html#fs_fs_createreadstream_path_options)
+* 这里备注一个知识点，on("事件字符串",回调函数)用于绑定事件，once("事件字符串",回调函数)用于绑定只触发一次的事件，触发之后立即销毁，
+* 有比较好的性能
+```
+let fs = require("fs")
+let ws = fs.createWriteStream("创建一下.txt")  //创建一个文件流
+ws.write("写入了什么")							//写入文件的同时打开流式文件水管
+ws.write("这就是第一个")
+ws.write("这是第二个")
+
+ws.close()     //最后要记得关闭水管
+
+ws.once("open",()=>{  				//因为流式文件水管打开只是打开一次，所以用Once绑定即可，open是一个监听文件流打开的事件
+  console.log("流式文件打开了")  
+})
+ws.once("close",()=>{				//close是监听文件流关闭的事件
+  console.log("流式文件关闭了")
+})
+```
+###### 文件的读取
+* 文件读取也和前面的文件写入一一对应，分为：1.同步文件读取，2.异步文件读取，3.简单文件读取，4.流式文件读取 这几样
+* 同步文件读取也是先open文件，然后读取fs.read()...之类的，所以直接从简单文件读取开始看
+* 简单文件读取的API是:1.fs.readFile(path[, options], callback)和同步的2.fs.readFileSync(path[, options])
+* 注意：读取的文件都会转化成Buffer文件类型，因为这种类型的数据可以是任何格式的文件，非常方便，读取的同时还能把Buffer文件
+* 写入到其他地方，完成一个简单的复制过程
+```
+let fs = require("fs")
+let path = "C:\\Users\\MICHEL\\Desktop\\其他\\微信图片_20200722000641.jpg"
+fs.readFile(path,(err , data)=>{   												//callback有两个参数，一个是错误，当发生错误的时候
+  if (err) return																//就会存在，第二个就是data,是一个Buffer文件
+  console.log("文件是啥",data)
+  fs.writeFile("图片.jpg",data,()=>{  											//获取到文件之后进行写入即可
+    console.log("复制成功")
+  })
+})
+```
+###### 流式文件的读取
+* 相比流式文件的写入，流式文件的读取显得更有必要，因为大文件的读取如果按简单文件读取，会非常阻塞主流程加载其他东西
+* 流式文件的读取也是一样，先创建一个管道，然后一点点的开始读取，不会阻塞主流程的进程
+* 采用的api是fs.createReadStream(path[, options])
+* 注意注意注意： 读取流有一个事件，data，只有当读取流绑定了这个事件之后才会触发读取完毕的close事件
+* 还有data这个事件比较特殊，不像写入流那样，data会自动关闭，并且每次读取的小块文件可以在回调函数里的data里面看到
+```
+let fs = require("fs")
+let path = "G:/2345下载/360aqllq_9.1.0.362.exe"  
+let rw = fs.createReadStream(path)				//首先创建一个读取流
+
+rw.once("open",()=>{							//和写入流一样，这也有一个监听读取开始和读取结束的事件
+  console.log("开始流式读取")
+})
+rw.once("close",()=>{							//这个关闭事件必须当rw绑定了一个data事件之后才会触发，当文件完全读取完之后触发
+  console.log("关闭流式读取")
+})
+
+rw.on("data",(data)=>{							//  注意 注意 如果没有这个data事件，是不会触发读取流关闭的
+  console.log("看看读取的文件",data)
+})
+```
+* 这时，就可以用流式文件读取和写入做一个大文件的复制功能
+* 注意注意注意 写入的时候要知道那个文件的尾缀例如栗子中的360测试.exe格式为exe
+```
+let fs = require("fs")
+let path = "G:/2345下载/360aqllq_9.1.0.362.exe"
+let rw = fs.createReadStream(path)
+let wf = fs.createWriteStream("360测试.exe")     	//先创建一个写入流
+
+rw.once("open",()=>{
+  console.log("开始流式读取")
+})
+rw.once("close",()=>{
+  wf.close()
+  console.log("关闭流式读取")
+})
+
+rw.on("data",(data)=>{
+  wf.write(data)
+  console.log("看看读取的文件",data)
+})
+```
+* 这种流式读取和写入非常常见，但是上诉方法太过繁琐，所以node有一个api联通了这个两个api为一个API
+* 就是管道rw.pipe(wf)   读取流.pipe(写入流) 这样一个管道的形式进行
+* 上面的代码可简略成一下代码
+```
+let fs = require("fs")
+let path = "G:/2345下载/360aqllq_9.1.0.362.exe"
+let rw = fs.createReadStream(path)
+let wf = fs.createWriteStream("360测试.exe")
+
+rw.pipe(wf)  //可读流.pipe(可写流)  
+```
+###### fs文件模块的其他小知识
+* fs.existsSync(path)  检查某个文件是否存在某个路径下
+* 注意，这个方法只有同步的方法，不能用异步，因为会出现很多问题，返回值是一个boolean类型的
+```
+let ex = fs.existsSync("test.txt")  //返回true
+```
+
+* fs.stat(path[, options], callback)  查看某个文件或者某个文件夹的状态
+* 这个方法可以有异步和同步，查看的关键几个属性有size(可以看到文件大小，单位是字节)还有创建时间和更新时间的时间戳
+* 以上的文件都在callback的第二个参数data里面可以看到,而且data里面还有几个方法isFile()判断是否是文件
+* isDirectory()判断是否是文件夹，一般是文件就不会是文件夹 所以两个是互斥的
+```
+let fs = require("fs")
+let path = "G:/2345下载/360aqllq_9.1.0.362.exe"
+
+fs.stat(path,(err,data)=>{
+  if (err) return 
+  console.log("看看文件描述",data)
+  console.log("看看是否是一个文件",data.isFile())
+  console.log("看看是否是一个文件夹",data.isDirectory())
+})
+```
+
+* fs.unlink(path, callback)和fs.unlinkSync(path)  删除文件
+* 删除文件比较简单，就是断开文件与磁盘的链接即可
+```
+let fs = require("fs")
+
+fs.unlinkSync("Node学习")   //直接删除即可
+```
+
+* fs.readdir(path[, options], callback)  读取文件目录的目录结构，callback里面的第二个参数是一个字符串数组，每个元素就是
+* 一个文件及或者文件的名字
+```
+let fs = require("fs")
+
+fs.readdir("./",(err,data)=>{     //这里表示当前目录可以选择./或者.都行
+  console.log("看看数据",data)
+})
+```
+
+* fs.truncate(path[, len], callback)和fs.truncateSync(path[, len])  截断文件
+* 将指定文件截断成需要的大小，单位为字节，一个中文是3个字节在utf-8里面，所以如果截断的量不匹配会出现乱码
+```
+let fs = require("fs")
+
+fs.truncateSync("创建一下.txt",6)  //截断成只有6字节的文件
+```
+
+* fs.mkdir(path[, options], callback)和fs.mkdirSync(path[, options])  创建一个目录 或者说是文件夹
+```
+let fs = require("fs")
+
+fs.mkdir("hello")
+```
+
+* fs.rmdir(path[, options], callback)和fs.rmdirSync(path[, options])  删除一个目录
+```
+let fs = require("fs")
+
+fs.rmdirSync("hello")
+```
+
+* fs.rename(oldPath, newPath, callback)  对一个文件进行重命名
+* 注意 这个方法不单单可以对文件进行重命名，还可以重新放到另一个目录下
+* 相当于剪切文件
+```
+let fs = require("fs")
+let path = "G:/2345下载/360aqllq_9.1.0.362.exe"
+
+fs.rename(path,"./360下载.exe",(err)=>{
+  console.log("成功")
+})
+```
+
+* fs.watchFile(filename[, options], listener)  对一个文件进行监听
+* 当一个文件进行变化的时候，就会触发这个里面的回调函数listener
+* listener里面有两个参数，一个是当前文件的stat一个是修改之前的文件stat 这两个stat状态和上面的stat一样
+* 能获取大小和创建时间等参数
+* 这个方法监听的逻辑是隔一段时间查看一次，默认是5秒，但是如果要修改也是可以的，在options里面的一个参数interval可以做到
+* 具体可以看这个[](http://nodejs.cn/api/fs.html#fs_fs_watchfile_filename_options_listener)
+```
+let fs = require("fs")
+
+fs.watchFile("./创建一下.txt",(curr, prev)=>{   //其中curr是现在文件的状态,prev是之前文件的状态
+  console.log("之前文件的大小",prev.size)
+  console.log("现在文件的大小",curr.size)
+})
 ```
 #### 小技巧
 * 如果想在某个文件夹下打开cmd，直接在文件夹的路径行输入cmd即可，路径就是当前文件夹下的路径
