@@ -487,3 +487,58 @@ methods:{
 //然后优点就是不需要在router.js中进行过多的修改 可以直接在需要的页面
 //用this.$route.query获取到
 ```
+## Vue3.0状态搭建
+* 首先第一步和Vue一样，安装vue-cli
+```
+npm install -g @vue/cli
+```
+* 然后vue -V 会出现vue版本号和vue-cli版本号
+```
+vue -V
+```
+* 环境搭好之后，第一步，创建一个项目，注意方法有点不一样
+```
+winpty vue.cmd create 项目名
+
+<!-- 然后会出现一个选项框 -->
+<!-- 选择第二个(用上下箭头) -->
+Vue CLI v4.3.1
+? Please pick a preset: 
+  default (babel, eslint) 
+❯ Manually select features
+```
+* 然后会让你选择这个项目需要搭建的其他插件
+* 这里默认选中Router、Vuex等项目必备的，为了等会直接升级vue3.0
+```
+<!-- 注意：Vue 3.0 项目目前需要从 Vue 2.0 项目升级而来，所以为了直接升级到 Vue 3.0 全家桶，
+我们需要在 Vue 项目创建过程中勾选 Router 和 Vuex，所以避免手动写初始化代码 -->
+
+Vue CLI v4.3.1
+? Please pick a preset: Manually select features
+? Check the features needed for your project: 
+ ◉ Babel
+ ◉ TypeScript
+ ◯ Progressive Web App (PWA) Support
+ ◉ Router
+ ◉ Vuex
+ ◉ CSS Pre-processors
+❯◉ Linter / Formatter
+ ◯ Unit Testing
+ ◯ E2E Testing
+```
+* 然后进入到项目里面进行项目升级
+```
+vue add vue-next
+```
+* 这个命令会自动安装vue-cli-plugin-vue-next插件
+* 这个插件会完成以下操作
+```
+安装 Vue 3.0 依赖
+更新 Vue 3.0 webpack loader 配置，使其能够支持 .vue 文件构建（这点非常重要）
+创建 Vue 3.0 的模板代码
+自动将代码中的 Vue Router 和 Vuex 升级到 4.0 版本，如果未安装则不会升级
+自动生成 Vue Router 和 Vuex 模板代码
+完成上述操作后，项目正式升级到 Vue 3.0
+```
+## Vue3.0直接gitclone拉代码
+* 

@@ -61,9 +61,9 @@ Web服务的API 就是类似接口
 2.线程
 	线程代表计算机的最小计量单位，线程是负责进程中的程序，相当于工厂里的工人
 ```
-#### node语法
+## node语法
 * node的执行类似java,在命令行进入当前目录，然后使用node 文件名即可执行文件
-###### node模块化
+#### node模块化
 * 在node里面，每个Js文件的JS代码都是独立于文件之中的，换句话说就是每个Js文件虽然是全局作用域，但是也相当于是一个大的自运行的方法
 * 在这个方法里面使用变量需要暴露出去才能被别的模块使用到
 * ES5模块化引入
@@ -90,7 +90,7 @@ let math = require("./math") //引入具体的文件模块，需要加上文件�
 * 其实本质上，每次npm install 安装的模块都会放在node_modules里面
 * 然后我们引入的时候直接使用let xx = require("yy") 进行引入即可
 * 这个过程其实就是引用的node_modules中的"yy"这个包的包内那个index.js这个文件
-###### node在全局上声明的是局部变量
+#### node在全局上声明的是局部变量
 * 在Node里面有一个类似window的全局变量叫做global，因为Node是后台语言所以没有window
 * 但是如果在全局里var 声明一个变量，该变量是一个局部变量，没办法使用global访问到，除非直接声明a = 1
 ```
@@ -138,7 +138,7 @@ module.exports = {
 }
 //上面module.exports是可行的，所以优选module.exports
 ```
-###### 包管理和包结构
+#### 包管理和包结构
 * 包实际上就是一个解压之后的文件目录，目录之下应该包含如下文件
 ```
 package.json   		---描述文件  (这个很重要，是用来描述这个包是干嘛的，也是必须要的)
@@ -175,7 +175,7 @@ node在使用模块名字引入包的时候，会首先在当前目录下的node
 
 let math = require("math") //如果当前目录没有这个包，则会一直往上一级寻找，类似作用域
 ```
-###### 包管理CommonJs规范
+#### 包管理CommonJs规范
 * 如果对出包感兴趣的同学可以使用CommonJs这个规范进行使用
 ```
 package.json:包描述文件
@@ -183,7 +183,7 @@ bin:用于存放二进制文件的目录
 lib:用于存放JavaScirpt代码的目录
 doc:用于存放文档的目录
 ```
-###### Buffer缓冲区
+#### Buffer缓冲区
 * 用户在请求数据的时候发送的都是二进制数据，所以后台必须要有一个值来缓冲一下二进制数据
 * 所以Buffer的作用在于，接收用户数据的使用作为一个缓冲区，而且响应数据的时候也作为一个缓冲区
 * Buffer缓冲区也可以是为了数组中存储的不足设置的，Buffer里面存储的都是二进制文件，所以可以存储类似MP4还有音乐和图片
@@ -245,7 +245,7 @@ buf.map((item,index)=>{
     console.log(item)
 })
 ```
-###### fs模块，文件系统
+#### fs模块，文件系统
 * node通过fs模块对文件系统的交互，包括打开，存储和写入等操作
 * 注意 fs模块中的所有操作都有两种形式可供选择，就是同步和异步
 * 同步文件会阻塞系统程序的运行，异步文件不会阻塞系统的运行，而是操作完毕之后通过回调函数将其结果返回
@@ -325,7 +325,7 @@ fs.writeFile("G:\\Node学习\\test.txt","这是writessFile写入的内容",{flag
 <!-- 路径的第二种写法 -->
 G:/Node学习/test.txt"
 ```
-###### 流式文件写入
+#### 流式文件写入
 * 无论是同步简单文件写入和异步简单文件写入，一单涉及大文件写入就不合适，因为一次性导入文件太大了，性能太差，容易导致内存溢出
 * 所以出现了流式文件写入，简单理解就是，创建一个文件流，然后持续不断的慢慢写入，不影响其他操作，
 * 使用的方法是fs.createReadStream(path[, options]),写入只读流，fs.createWriteStream(path[, options]),写入可读流
@@ -348,7 +348,7 @@ ws.once("close",()=>{				//close是监听文件流关闭的事件
   console.log("流式文件关闭了")
 })
 ```
-###### 文件的读取
+#### 文件的读取
 * 文件读取也和前面的文件写入一一对应，分为：1.同步文件读取，2.异步文件读取，3.简单文件读取，4.流式文件读取 这几样
 * 同步文件读取也是先open文件，然后读取fs.read()...之类的，所以直接从简单文件读取开始看
 * 简单文件读取的API是:1.fs.readFile(path[, options], callback)和同步的2.fs.readFileSync(path[, options])
@@ -365,7 +365,7 @@ fs.readFile(path,(err , data)=>{   												//callback有两个参数，一�
   })
 })
 ```
-###### 流式文件的读取
+#### 流式文件的读取
 * 相比流式文件的写入，流式文件的读取显得更有必要，因为大文件的读取如果按简单文件读取，会非常阻塞主流程加载其他东西
 * 流式文件的读取也是一样，先创建一个管道，然后一点点的开始读取，不会阻塞主流程的进程
 * 采用的api是fs.createReadStream(path[, options])
@@ -419,7 +419,7 @@ let wf = fs.createWriteStream("360测试.exe")
 
 rw.pipe(wf)  //可读流.pipe(可写流)  
 ```
-###### fs文件模块的其他小知识
+#### fs文件模块的其他小知识
 * fs.existsSync(path)  检查某个文件是否存在某个路径下
 * 注意，这个方法只有同步的方法，不能用异步，因为会出现很多问题，返回值是一个boolean类型的
 ```
@@ -508,7 +508,7 @@ fs.watchFile("./创建一下.txt",(curr, prev)=>{   //其中curr是现在文件�
   console.log("现在文件的大小",curr.size)
 })
 ```
-###### fs简单命令汇总
+#### fs简单命令汇总
 ```
 1.fs.stat			检测是文件还是目录
 2.fs.mkdir  		创建目录
@@ -519,7 +519,7 @@ fs.watchFile("./创建一下.txt",(curr, prev)=>{   //其中curr是现在文件�
 7.fs.rmdir			删除目录
 8.fs.unlink			删除文件
 ```
-###### HTTP模块
+#### HTTP模块
 * http模块是负责node的http传输功能模块
 * 简单创建一个Http服务
 * 使用http.createServer即可
@@ -560,7 +560,7 @@ http.createServer((req,res)=>{
   console.log("开启服务成功")
 })
 ```
-###### URL模块
+#### URL模块
 * 在http请求的时候，客户端也就是web端是可以通过url传递信息的，或者post请求就是通过请求体传递信息
 * 在通过Url传递信息的时候，服务端可以直接通过http.createServer中的req.url获取，但是获取的是一个字符串
 * 所以需要一个模块专门将这个字符串进行解析
@@ -574,7 +574,7 @@ console.log(url.parse(web))   						--->这里取到的是 query: 'a=www&b=sss',
 <!-- 如果在第二个参数传入一个true，就会将传递的query直接转化成json格式 -->
 console.log(url.parse(web,true).query)   			--->这里取到的是	query: [Object: null prototype] { a: 'www', b: 'sss' },
 ```
-###### nodemon
+#### nodemon
 * nodemon是一个Node自启动工具，当每次修改node的代码的时候，都需要手动重新启动一次node
 ```
 node xxx.js
@@ -585,8 +585,8 @@ node xxx.js
 ```
 nodemon xxx.js
 ```
-###### 
-#### 服务器搭建
+#### 
+## 服务器搭建
 * 首先需要先在网上开通一个服务器，然后下载一个Xshell6，方便访问linux服务器
 * 下载的Xshell 6 有些命令是还不能正常使用的，例如上传文件的rz命令，所以需要安装这个插件
 ```
@@ -648,5 +648,23 @@ ln -s /usr/local/node_global/bin/cnpm /usr/bin/cnpm  (-s 后面是接需要导�
 ```
 ln -s 得到的地址 /usr/local/bin
 ```
-#### 小技巧
+## 小技巧
 * 如果想在某个文件夹下打开cmd，直接在文件夹的路径行输入cmd即可，路径就是当前文件夹下的路径
+## node服务简单搭建
+* 新建一个server.js文件，填写如下代码即可
+```
+//引入express中间件
+var express = require('express');
+var app = express();
+
+//指定启动服务器到哪个文件夹，我这边指的是dist文件夹
+app.use(express.static('./build'));
+
+//监听端口为3000
+var server = app.listen(8080, function () {
+    var host = server.address().address;
+    var port = server.address().port;
+
+    console.log('Example app listening at http://%s:%s', host, port);
+});
+```
