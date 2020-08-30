@@ -487,6 +487,8 @@ methods:{
 //然后优点就是不需要在router.js中进行过多的修改 可以直接在需要的页面
 //用this.$route.query获取到
 ```
+## Vue看这一篇文章就够了
+[](https://www.jianshu.com/p/72018b6601ce)
 ## Vue3.0状态搭建
 * 首先第一步和Vue一样，安装vue-cli
 ```
@@ -517,7 +519,7 @@ Vue CLI v4.3.1
 ? Please pick a preset: Manually select features
 ? Check the features needed for your project: 
  ◉ Babel
- ◉ TypeScript
+ ◯ TypeScript
  ◯ Progressive Web App (PWA) Support
  ◉ Router
  ◉ Vuex
@@ -540,5 +542,149 @@ vue add vue-next
 自动生成 Vue Router 和 Vuex 模板代码
 完成上述操作后，项目正式升级到 Vue 3.0
 ```
-## Vue3.0直接gitclone拉代码
-* 
+## Vue3.0使用指南
+[vue3.0简单介绍](https://composition-api.vuejs.org/zh/#%E6%9B%B4%E5%A5%BD%E7%9A%84%E7%B1%BB%E5%9E%8B%E6%8E%A8%E5%AF%BC)
+[Vue3.0API详细](https://composition-api.vuejs.org/zh/api.html#setup)
+#### 体验Vue3.0的三种方式
+```
+1.通过官方的Webpack Prewview
+2.通过上诉的Vue-cli  然后使用 vue add vue-next
+3.通过Vite
+```
+#### Vue3.0的优化
+* 更好的兼容了TypeScript
+#### Vue3.0Api
+* setup()
+* setup函数是一个新的组件选项，是Vue3.0Component Api的一个入口点，所有的生命周期和状态属性都在里面
+* 但是记得最后要把里面的方法进行抛出
+* 另外，setup接收两个参数，第一个参数是props,第二个参数是context,context是上下文，是为了接替之前的方法
+* 例如：attrs slots emit
+* 另外，this是无法再setup函数里面起作用的,千万注意
+```
+<script>
+import {reactive,ref,onMounted,onUpdated,onUnmounted} from "vue"
+export default {
+  name: 'App',
+  setup(){
+    const count = ref(0)
+    const state = reactive({
+      path:"/"
+    })
+    onMounted(()=>{
+      console.log(window.location.pathname)
+    })
+
+    return {
+      state,
+      count
+    }
+  }
+}
+</script>
+```
+#### Vue3.0实现自定义方法
+* Vue3.0还有一个很强大的地方，就是能够像react Hooks一样将可以复用的工具文件提取出来类似useDidMount
+```
+<!-- 以下是在.js文件中使用的 -->
+import { ref, onMounted, onUnmounted } from 'vue'
+
+export function useMousePosition() {
+  const x = ref(0)
+  const y = ref(0)
+
+  function update(e) {
+    x.value = e.pageX
+    y.value = e.pageY
+  }
+
+  onMounted(() => {
+    window.addEventListener('mousemove', update)
+  })
+
+  onUnmounted(() => {
+    window.removeEventListener('mousemove', update)
+  })
+
+  return { x, y }
+}
+```
+* 然后就能在组件中使用
+```
+<script>
+  import { useMousePosition } from "../../components/Title"
+  export default {
+    setup(){
+      const { x, y } = useMousePosition()
+		...其他代码
+      return { x, y }
+    }
+  }
+</script>
+```
+## 前端开发利器，Vite
+[vite仓库](https://github.com/vitejs/vite)
+[搭建vite+vue3.0指南](https://www.jianshu.com/p/0ebd56cb22d2)
+* 这个开发利器只能在开发环境中使用，他的逻辑是直接将代码上传到浏览器端进行解析，然后服务器再打包给浏览器，
+* 就不会像webpack那样打包好了之后再发给浏览器编译，节约了很多时间
+* 因为现代浏览器其实是支持import 的 所以你把代码直接上传到浏览器解析的时候浏览器可以直接通过import 找到你的依赖项进行解析
+#### 使用vite+vue3.0搭建你的项目
+```
+<!-- 先安装一下脚手架 -->
+1.cnpm install create-vite-app -g  
+
+<!-- 第二步新建一个自己的项目 -->
+2.	npm init vite-app <project-name>
+或者	npm create-vite-app vite
+
+<!-- 然后启动项目即可 -->
+3、npm install
+4、npm run dev
+```
+* 这个时候已经可以用Vite使用vue3.0的语法了
+* 然后安装vue-router
+```
+<!-- 首先查看vue-router的所有版本号 -->
+npm info vue-router versions
+
+<!-- 然后安装vue-router@4.0.0-beta.6 -->
+cnpm install vue-router@4.0.0-beta.6 -S
+```
+* 接下来就是配置vue-router了
+* 简单来说Vue Router的vue3.0版本主要区别就是我们进入路由的方式变了，其中最重要的就是createRouter和createWebHistory
+* 在之前如果要切换路由模式直接在mode:history就能从哈希模式更改为history模式了，现在更替为history:createWebHistory来实现
+* 这一切都是为了适配typeScript做的修改
+```
+<!-- 在根目录下src新建一个router文件夹，然后在router文件夹下新建一个index.js -->
+<!-- createWebHistory对应就是histroy模式  createWebHashHistory就是hash模式 -->
+import { createRouter, createWebHistory ,createWebHashHistory} from 'vue-router'
+import Home from "../view/Home/Home.vue"
+
+const routerHistory = createWebHistory()
+
+const router = createRouter({
+  history:routerHistory,
+  routes:[
+    {
+      path:"/",
+      component:Home
+    }
+  ]
+})
+
+export default router
+```
+* 最后在main.js进行引入，大体和vue2.0一样，只是为了更加适配typescript
+```
+import { createApp } from 'vue'
+import App from './App.vue'
+import './index.css'
+import router from "./router"
+
+const app = createApp(App)
+
+app.use(router)
+app.mount('#app')
+```
+* 最后在主页面引入<router-view>就能使用vue-router了
+#### 如果需要用Vite搭建react脚手架也可以
+[vite脚手架git地址](https://www.npmjs.com/package/create-vite-app)
