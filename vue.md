@@ -553,13 +553,65 @@ vue add vue-next
 ```
 #### Vue3.0的优化
 * 更好的兼容了TypeScript
-#### Vue3.0Api
+* 使用了ES6的新特性Proxy,代替了原来的Object.defineProperty，因为前者的性能更加出众，
+* 我们在使用Object.defineProperty无法监控到数组的下标的变化，直接导致通过数据下标给数组设置值
+* 不能做到及时响应
+> 包括以下的数组方法
+```
+push()
+pop()
+shift()
+unshift()
+splice()
+sort()
+reverse()
+```
+* 而取代他的Proxy则有以下的优点
+```
+1.可以劫持整个对象，并返回一个新对象
+2.有13种劫持操作
+```
+* Proxy可以理解成，在目标对象之前架设一层拦截，外界访问到这个对象的时候都必须通过这层拦截
+* 因此提供了一种机制，可以对外界的访问进行过滤和改写
+* Proxy的基本使用方法
+> 其中target表示用Proxy包装的对象(这里可以是任何类型，包括数组 函数 或者Proxy)
+> handler是一个对象，里面包含可以劫持的13中操作方法
+> 其中包括
+```
+get: 读取值，
+set: 获取值，
+has: 判断对象是否拥有该属性，
+construct: 构造函数
+```
+* 我们先简单实例一个Proxy
+> 其中target代表当前对象，property代表对象的某个key，value则是赋值的对应值
+```
+const obj = {}
+  const handler = {
+    get:(target,property)=>{
+      return property in target ? target[property] : 3
+    },
+    set:(target,property,value)=>{
+      target[property] = value
+	  <!-- 这里注意要返回一个true代表赋值成功，不然会报错 -->
+      return true
+    }
+  } 
+  const p = new Proxy(obj,handler)
+  p.name = "这是啥"
+  <!-- 这里读取的就是上面的name-->
+  console.log(p.name) 
+  <!-- 这个返回的是3-->
+  console.log(p.age)
+```
+#### Vue3.0Api setup
 * setup()
 * setup函数是一个新的组件选项，是Vue3.0Component Api的一个入口点，所有的生命周期和状态属性都在里面
 * 但是记得最后要把里面的方法进行抛出
 * 另外，setup接收两个参数，第一个参数是props,第二个参数是context,context是上下文，是为了接替之前的方法
 * 例如：attrs slots emit
 * 另外，this是无法再setup函数里面起作用的,千万注意
+* setup暴露出去的值最后也会在this上暴露，所以方法里可以使用this至今获取
 ```
 <script>
 import {reactive,ref,onMounted,onUpdated,onUnmounted} from "vue"
@@ -581,6 +633,220 @@ export default {
   }
 }
 </script>
+```
+#### reactive
+* reactive可以理解成是之前的data，里面可以存放所有的状态，在组件内部可以使用this.xxx获取到
+```
+<template>
+  <div>
+    {{state.num}}
+    <button @click="changeNum">点击</button>
+  </div>
+</template>
+
+<script lang="tsx">
+  import { provide,ref,reactive } from "vue"
+  export default {
+    setup(){
+      const state = reactive({
+        num:23
+      })
+      return { 
+        state
+      }
+    },
+    methods:{
+      changeNum(){
+        this.state.num ++
+      }
+    }
+  }
+</script>
+```
+#### ref
+* ref类似reactHooks里面的useRef，这个在刘雨奚的直播中也有说是有借鉴reacthooks做出了一些更新
+* vue3.0里面的ref也是可以当做reative来使用，具有响应式，而且如果ref里的值为对象或者更深层嵌套
+* 底部也会调用reative进行响应式
+> 有一点需要注意只有在setup()里面需要使用ref.value来获取到ref的值
+```
+<template>
+  <div>
+    <button @click="changeNum">点击</button>
+	<!-- 展示的时候也是直接使用count即可 -->
+    {{count}}
+  </div>
+</template>
+
+<script lang="tsx">
+  import { provide,ref,reactive,onMounted } from "vue"
+  export default {
+    setup(){
+      const count = ref(0)
+      onMounted(()=>{
+		  <!-- 因为是在setup里面，所以无法使用This，这里需要使用count.value来取值-->
+        console.log(count.value)
+      })
+      return { 
+        count
+      }
+    },
+    methods:{
+      changeNum(){
+		  <!-- 这里获取到的已经是setup抛出的值 所以可以用this直接获取到 -->
+        this.count ++
+        console.log(this.count)
+      }
+    }
+  }
+</script>
+```
+* ref除了含有reactive的功能之外，还有一个它本身的功能，操控dom
+* 当然，在响应式编程里面，用一次dom的消耗是很大的，所以尽量少使用dom
+> 注意 当你在模板中使用ref绑定了一个dom之后，原来的value就失效了，你只能获取到dom元素
+```
+<template>
+  <div>
+    <div ref="root">
+      这就是div
+    </div>
+  </div>
+</template>
+
+<script lang="tsx">
+  import { ref,onMounted } from "vue"
+  export default {
+    setup(){
+      const root = ref(null)
+      onMounted(()=>{
+		  <!-- 这里不再会获得null 只能获取dom-->
+        console.log(root.value)
+      })
+      return { 
+        root
+      }
+    }
+  }
+</script>
+```
+#### computed
+* computed和vue2.0一样，属于计算属性，本质上是为了解决如果一个state状态值发生改变
+* 能够同时计算出从state里面计算出来的值形成一个热反馈
+* 可以理解成是一个watch，监听state变化而变化，但是能耗更低
+* computed的使用有两种：
+> 1.传入一个getter函数，返回一个默认的不可修改的ref对象
+```
+<!-- 第一种使用方法是传入一个getter函数，里面的返回值就是ref的值 -->
+<!-- 所以和ref有相同的取值模式，在setup里面要使用.value 外面则不用 -->
+setup(){
+      const count = ref(0)
+      const plusOne = computed(()=>{
+        return count.value + 1
+      })
+      return {
+        count,
+        plusOne
+      }
+    },
+```
+> 2.传入一个对象，里面包含get()和set()，可以在set()里面进行更改
+* 第二种方式使用起来会有点绕，但是理清了顺序还是很容易弄懂的
+* 首先 现在count默认值是0，plusOne默认值是1 因为get方法里已经+1了
+* 然后我们触发了change方法，将plusOne+1 --> set方法开始触发set里面的val是已经赋值完之后的值为2
+* 所以在set里面的count.value = val*2 这时count.value就变成了4
+* 然后因为改变了count.value 所以再次触发一次get()所以此时plusOne为5
+```
+export default {
+    setup(){
+      const count = ref(0)
+      const plusOne = computed({
+        get:()=>{
+          console.log("count.value",count.value)
+          return count.value + 1
+        },
+		<!-- 注意 这里set里面的val是plusOne赋值之后的值为2 -->
+        set:(val)=>{
+          console.log(val)
+          count.value = val*2
+        }
+      })
+      return {
+        count,
+        plusOne
+      }
+    },
+    methods:{
+      change(){
+        this.plusOne ++
+        // this.count ++
+      }
+    }
+```
+#### 代替Vuex provide 和 inject实现状态传递
+* 理论上来说vue3.0是不再需要vuex了，可以通过provide和inject作为状态注入实现这个状态的传递
+* 注意 provide和inject都需要在当前活动组件的setup中进行调用
+* 这个的原理也是vue2里面的提供者，和注入，就是在所有组件的父组件调用provide进行注入，然后下面
+* 所有的子组件都能获取到这个值，加入ref之后还能动态获取到，而且进行操作
+```
+<!-- 先在所有组件的父组件中进行提供provide -->
+<!-- 或者直接在app.vue里面使用，这样效果会更好，下面的所有路由都会享受到这个方法-->
+  import { provide,ref } from "vue"
+  import { useMousePosition,useProject } from "../../components/Title"
+  import Project from "../Project/Project.vue"
+  import Reject from "../Reject/Reject.vue"
+  export default {
+    setup(){
+		<!-- 下面两行代码即是将xxx注入，初始值为0 -->
+		<!-- 其中下面的子组件 -->
+      const getNum = ref(0)
+      provide("xxx",getNum)
+      return {  }
+    },
+    components:{
+      Project,
+      Reject
+    }
+  }
+```
+> 其中注入代码可以封装成一个复用的方法，减少代码量
+> 然后直接调用即可
+```
+export const useProject = (key,value)=>{
+  const store = ref(value)
+  return provide(key,store)
+}
+```
+* 最后就可以实现在子组件中的获取和使用，这都是及时更新的
+```
+<!-- 在第一个子组件中展示xxx值 -->
+import { provide ,inject} from "vue"
+  export default {
+    setup(){
+		<!-- 获取到的num可以直接抛出，在模板中也是直接使用{{num}}即可展示 -->
+      const num = inject("xxx")
+      return {
+        num
+      }
+    }
+    
+  }
+
+<!-- 然后在第二个子组件中修改xxx值，第一个子组件也会发生变化 -->
+import { inject ,reactive} from "vue"
+  export default {
+    setup(){
+      const num = inject("xxx")
+      return {
+		  <!-- 记得最后要抛出-->
+        num
+      }
+    },
+    methods:{
+      changeNum(){
+		  <!-- 获取xxx也很简单，注入的同时就会暴露在this上面-->
+        this.num ++
+      }
+    }
+  }
 ```
 #### Vue3.0实现自定义方法
 * Vue3.0还有一个很强大的地方，就是能够像react Hooks一样将可以复用的工具文件提取出来类似useDidMount
@@ -686,5 +952,69 @@ app.use(router)
 app.mount('#app')
 ```
 * 最后在主页面引入<router-view>就能使用vue-router了
+#### 引入sass
+* 首先先安装sass
+```
+cnpm install sass --save
+```
+* 然后这时候会发现控制台报错，只需要把package.json中的sass移动到devDependencies栏
+* 然后重新npm run dev启动项目即可
+```
+{
+  "name": "myweb",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "vue": "^3.0.0-rc.1",
+    "vue-router": "^4.0.0-beta.6"
+-	"sass": "^1.26.10",
+  },
+  "devDependencies": {
++   "sass": "^1.26.10",
+    "vite": "^1.0.0-rc.1",
+    "@vue/compiler-sfc": "^3.0.0-rc.1"
+  }
+}
+```
+#### 引入TS
+* 其实Vite脚手架中是自带TS的，所以不需要重新安装，但是有些编辑器可能会报错，报错的时候重新执行以下命令安装一下即可
+```
+yarn add typescript -D
+tsc --init
+```
+* 如果使用VsCode就跳过上面那一步，我们之间把main.js改为main.ts
+* 但是你会发现控制台还是会报错，原因是因为ts编辑器无法理解.Vue文件
+* 所以我们在src目录下加入一个ts解析文件xxx.d.ts告诉Vite怎么理解.Vue文件即可
+> 这里我使用的是shims-vue为文件名 在 src/shime-vue.d.ts中输入以下命令
+```
+declare module '*.vue' {
+  import { Component } from 'vue'
+  const component: Component
+  export default component
+}
+```
+* 这时候你发现控制台还是会报错找不到main.js文件，因为在Index.html文件中引入的main.js要改成main.ts
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vite App</title>
+</head>
+<body>
+  <div id="app"></div>
+  <!-- 这里改成main.ts-->
++  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
+```
+* 然后就能正常使用typescript了
+> 注意 如果要在.Vue单文件中使用ts 要把script标签改为
+> <script lang="tsx">
 #### 如果需要用Vite搭建react脚手架也可以
 [vite脚手架git地址](https://www.npmjs.com/package/create-vite-app)

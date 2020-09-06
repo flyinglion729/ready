@@ -550,7 +550,7 @@ http.createServer((req,res)=>{
 	<!-- 使用res.write能直接在html中输入任何标签，包括head -->
   res.write(`
     <head>
-      <meta charset="UTF-8">    
+      <meta charset="UTF-8">
     </head>
   `)
   <!-- 如果上面没有设置UTF-8的head标签会出现乱码-->
@@ -585,8 +585,34 @@ node xxx.js
 ```
 nodemon xxx.js
 ```
-#### 
-## 服务器搭建
+#### 路由
+* 路由可以理解成除去域名之后，在/后面加上的东西，这个值在后台是可以通过url模块获取到的，所以通过不同的路由。后台可以做不同的处理
+```
+const http = require("http")
+const fs = require("fs")
+
+http.createServer((req,res)=>{
+  console.log(req.url)
+  const pathname = req.url
+  <!-- 其中访问 xxx域名/就能返回str数据 -->
+  if (pathname === "/") {  
+    res.writeHead(200,{"Content-Type":"text/html;charset=utf-8"})
+    const str = "这就是返回的数据"
+    res.end(str)
+	<!-- 如果是访问 xxx域名/home 就会返回obj数据 -->
+  } else if (pathname === "/home") {
+    res.writeHead(200,{"Content-Type":"text/html;charset=utf-8"})
+    const obj = JSON.stringify({
+      home:"家里",
+      computer:"电脑"
+    })
+    res.end(obj)
+  }
+}).listen(8080,()=>{
+  console.log("启动成功")
+})
+```
+## 服务器搭建前期准备工作
 * 首先需要先在网上开通一个服务器，然后下载一个Xshell6，方便访问linux服务器
 * 下载的Xshell 6 有些命令是还不能正常使用的，例如上传文件的rz命令，所以需要安装这个插件
 ```
@@ -667,4 +693,213 @@ var server = app.listen(8080, function () {
 
     console.log('Example app listening at http://%s:%s', host, port);
 });
+```
+## express框架
+[express官网](https://www.expressjs.com.cn/)
+* express是现在node.js的主流框架，和Koa一样，由同一个团队打造，Koa就会更轻而且更小，但是express还是有必要学习一下的
+* 下面就是express的一些api和理解
+* 首先是将express进行安装
+```
+npm install express --save
+或者 cnpm install express --save
+```
+#### express配置服务器
+* express帮我们封装了很多东西，所以很多时候我们之间调用即可
+* 在使用请求中，多数有四种请求方式get post put 和 delete方式，其中get和post用得最多，其次就是put用于修改数据，还有delete用于删除数据
+* 使用方法也很简单，将express实例化出来之后，之间使用app.xxx("路由",(req,res)=>{})就能拿到数据
+```
+const express = require("express")
+const app = express()
+
+app.get("/",(req,res)=>{
+  res.send("首页")
+})
+
+app.get("/home",(req,res)=>{
+  const obj = {
+    home:"sdsd"
+  }
+  res.send(obj)
+})
+
+<!-- put请求一般是用来修改数据的 -->
+app.put("/put",(req,res)=>{
+  res.send("put请求")
+})
+
+<!-- delete请求一般用来删除数据 -->
+app.delete("/delete",(req,res)=>{
+  res.send("delete请求")
+})
+
+app.listen(8080,()=>{
+  console.log("开启成功")
+})
+```
+* 除了静态路由 还可以配置动态路由，使用req.params即可获取到
+```
+<!-- 这是从代码中获取路由后面的值 -->
+app.get("/home/:id/:name",(req,res)=>{
+  const id = req.params["id"]
+  const name = req.params["name"]
+  console.log(req.params)
+  res.send(id)
+})
+
+<!-- 这时url中可以这样配置 https://xxx/id/name -->
+```
+#### get和post请求还有传递数据
+* 在express中获取get或post传递的请求还是非常简单的，繁琐的部分都被封装好了，而且拿到的直接就是json格式的数据，非常方便
+* get请求当中是直接从req.query里面拿值就行了，但是如果需要用到post请求则需要再在前面加个中间件，解析一下，不然会默认返回undefined
+* 注意，post请求中的数据是在body里面的
+```
+<!-- get请求获取数据 -->
+app.get("/home",(req,res)=>{
+  const query = req.query
+  console.log(query)
+  res.send(query)
+})
+<!-- get请求时的url -->
+http://localhost:8080/home?name=son&age=12
+
+<!-- 如果使用post请求则需要用到中间件 -->
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
+app.post("/home",(req,res)=>{
+	<!-- 请求值要从body里面拿，常识 -->
+  const name = req.body
+  console.log(name)
+  res.send(name)
+})
+```
+* 当然 有时候我们还需要一个请求进行多个异步操作 这个时候就需要用到next()
+```
+<!-- 第三个参数next执行了之后才会执行下面的方法 -->
+app.get("/home",(req,res,next)=>{
+  const query = req.query
+  console.log(query)
+  res.send(query)
+  <!-- next执行了之后才会执行下面的方法-->
+  next()
+},(req,res)=>{
+  console.log("这是啥")
+})
+```
+#### 中间件 app.use()
+* express的中间件有分很多种，大致分为以下几种
+```
+1.应用级中间件(常用)
+2.路由级中间件
+3.错误处理中间件
+4.内置中间件
+5.第三方中间件
+```
+* 1.应用级中间件
+* 这个中间件的作用在于，在你读取某个路由之前或者之后需要做一些操作的时候，就可以使用中间件，他是一种从上往下的执行顺序
+* 直到使用next()之后才会向下执行
+```
+app.use((req,res,next)=>{
+	<!-- 在中间值中设置的req.header可以在下面的请求中获取到 -->
+  req.header = "wdwd"
+  next()
+})
+
+app.get("/home",(req,res)=>{
+	<!-- 这里可以获取到req.header -->
+  console.log(req.header)
+  res.send("home")
+})
+```
+* app.use("地址",路由或者方法) 所以app.use可以针对某一个路由进行拦截
+* 或者我们可以把use和路由一起使用，就能拆开路由，变得很优美
+```
+<!-- 先建一个子路由 -->
+const express = require("express")
+var router = express.Router()
+
+router.get("/name",(req,res)=>{
+  res.send("name")
+})
+router.get("/age",(req,res)=>{
+  res.send("age")
+})
+<!-- 最后把路由文件抛出 -->
+module.exports = router
+```
+* 把上面抛出的子路由引入进主路由，然后放在use后面，所有的请求都会变成以/home开头的请求
+```
+
+const express = require("express")
+const app = express()
+<!-- 然后在主路由环境将子路由引入 -->
+const router = require("./subRouter")
+
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
+<!-- 放在use中间件后面即可 -->
+app.use("/home",router)
+
+app.listen(8080,()=>{
+  console.log("开启成功")
+})
+```
+* 2.路由级中间件(使用较少)
+* 当需要一个路由匹配到之后，继续往下匹配，则可以使用路由级中间件
+```
+<!-- 使用关键字next进行继续往下执行 -->
+app.get("/home",(req,res,next)=>{
+  console.log("继续往下")
+  next()
+})
+app.get("/home/:id",(req,res)=>{
+  res.send(req.params)
+})
+
+```
+* 3.错误处理中间件
+* 当没有匹配到相应的路由时，所需要使用到的中间件，也是使用app.use进行拦截，但是是放在所有路由的最后，进行最后的拦截
+```
+<!-- 这里我们继续使用上面的例子，使用use进行最后的拦截，当最后状态为404时即返回404 -->
+app.get("/home",(req,res,next)=>{
+  console.log("继续往下")
+  next()
+})
+app.get("/home/:id",(req,res)=>{
+  res.send(req.params)
+})
+<!-- 当上面的所有路由都没匹配就返回404 -->
+app.use((req,res)=>{
+  res.status(404).send("404")
+})
+```
+* 4.内置中间件
+* 内置中间件可以理解为是一个用来匹配目录下的静态文件的中间件，可以通过特定的地址进行查找静态文件
+* 我们可以使用path进行匹配，然后匹配到对应的静态文件
+```
+const path = require("path")
+app.use(express.static(path.join(__dirname, 'dist')))
+```
+* 5.第三方中间件，就是使用npm下载的中间件，可以上npm.js上看就行，这里不具体举例
+#### express配置cookie
+* express没有内置的配置cookie的api，但是我们可以通过第三方中间件来实现这个功能
+* 这里选择cookie-parser作为第三方中间件进行cookie的使用
+* 首先安装cookie-parser
+```
+npm install cookie-parser --save
+```
+* 然后直接在代码里讲中间件初始化
+* 其中获取cookies可以在req.cookies里面获取 设置cookie则可以在res.cookie设置，其中res.cookie支持以下方式
+> cookie(name: string, val: string, options: CookieOptions): this;
+> name为cookie名称，val为cookie值,options为默认配置，默认配置详细可以看npm中的cookie描述[](https://www.npmjs.com/package/cookie)
+```
+const cookieParser = require("cookie-parser")
+<!-- 初始化cookieParser中间件 -->
+app.use(cookieParser())
+
+app.get("/home",(req,res)=>{
+  res.cookie('rememberme', '1', { expires: new Date(Date.now() + 900000), httpOnly: true });
+  console.log(req.cookies)
+})
 ```
