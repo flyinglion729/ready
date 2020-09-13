@@ -3157,7 +3157,3 @@ maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
 ```
 import 'lib-flexible' //注意 这个最好放最后引入 不然容易报错
 ```
-## 附HOOKS讲解
-#### 首先由最简单的useState开始讲解
-* useState处理了无状态组件中的状态问题，让无状态组件有状态
-* 使用方法也很简单，就是通过一个useState()的方法进行操作

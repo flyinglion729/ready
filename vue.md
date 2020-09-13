@@ -487,7 +487,7 @@ methods:{
 //然后优点就是不需要在router.js中进行过多的修改 可以直接在需要的页面
 //用this.$route.query获取到
 ```
-## Vue看这一篇文章就够了
+## Vue-cli看这一篇文章就够了
 [](https://www.jianshu.com/p/72018b6601ce)
 ## Vue3.0状态搭建
 * 首先第一步和Vue一样，安装vue-cli
@@ -543,7 +543,7 @@ vue add vue-next
 完成上述操作后，项目正式升级到 Vue 3.0
 ```
 ## Vue3.0使用指南
-[vue3.0简单介绍](https://composition-api.vuejs.org/zh/#%E6%9B%B4%E5%A5%BD%E7%9A%84%E7%B1%BB%E5%9E%8B%E6%8E%A8%E5%AF%BC)
+[vue3.0简单介绍](https://composition-api.vuejs.org/zh)
 [Vue3.0API详细](https://composition-api.vuejs.org/zh/api.html#setup)
 #### 体验Vue3.0的三种方式
 ```
@@ -781,6 +781,93 @@ export default {
       }
     }
 ```
+#### readonly
+* 在js的语言中，只有简单数据类型可以设置只读类型，就是使用const，但是如果换成复杂数据类型
+* 例如是对象或者是数组，就无法设置只读的类型了，里面的值是可以随意更改的
+* 所以vue3.0引入了readonly属性，可以对复杂数据类型进行设置只读，不单单是简单的对象还可以是状态对象或者是ref
+> 注意 只有被赋值之后的readonly对象会有只读属性，但是不会改变赋值对象本身的可修改属性
+```
+import { ref,readonly,  reactive } from "vue"
+  export default {
+    setup(){
+      const state = reactive({
+        count:20
+      })
+      const only = readonly(state)
+      return {
+        state,
+        only
+      }
+    },
+    methods:{
+      change(){
+		<!-- 原来的state还是可以修改的-->
+        this.state.count ++
+		<!-- 如果修改readonly对象则会报错 -->
+        this.only.count ++
+      }
+    }
+  }
+```
+#### watchEffect
+* watchEffect可以理解成是vue的watch，但是不需要单独声明是哪个变量需要监听，只要是里面的状态值发生改变就会执行里面的方法
+* 在实际运用中，还没想到什么好的用法，在官方实例中也是简单的使用了以上功能
+* 其中还有一个能够停止监听的方法，这个应该是和watch区分开的区别之一
+* 实际还有种用法官方实例会更清晰一点
+[](https://composition-api.vuejs.org/zh/api.html#watcheffect)
+```
+ setup(){
+      const state = reactive({
+        count:20
+      })
+      const stop = watchEffect(()=>{
+        console.log("监听了",state.count)
+      })
+	  <!-- 如果执行了这个stop，则不会再继续监听-->
+      stop()
+      return {
+        state
+      }
+    },
+```
+#### watch
+* 相比于watchEffect，watch在我理解里会更强大一点，首先watch的使用方式和vue2.0其实是一样的
+* 另外watch还允许我们:
+```
+1.懒执行副作用
+2.更加明确哪些状态改变会触发监听器重新加载
+3.可以访问状态更新前后的值
+4.可以监听多个状态
+```
+* 监听多个状态的时候可以使用数组的形式
+```
+setup(){
+      const getRef = ref(0)
+      const state = reactive({
+        count:20,
+        num:0
+      })
+      
+      watch(()=>state.count,(count, prevCount)=>{
+        console.log("监听到了恭喜你")
+      })
+      watch(getRef,(getRef,prevGetRef)=>{
+        console.log("能监听单个ref")
+      })
+      watch([state.count,state.num],([count,num],[prevCount,prevNum])=>{
+        console.log("监听到了恭喜你22")
+      })
+      stop()
+      return {
+        state,
+        getRef
+      }
+    },
+```
+#### 最后对于使用reactive还是ref的想法
+* 这里面其实更加推荐全部使用reactive，在组合函数返回响应式对象时使用 toRefs即可
+* 因为如果ref里面存储的是复杂数据类型，其实还是会在内部调用reactive的，其中官方文档也是这样描述的
+[](https://composition-api.vuejs.org/zh/#ref-vs-reactive)
 #### 代替Vuex provide 和 inject实现状态传递
 * 理论上来说vue3.0是不再需要vuex了，可以通过provide和inject作为状态注入实现这个状态的传递
 * 注意 provide和inject都需要在当前活动组件的setup中进行调用
