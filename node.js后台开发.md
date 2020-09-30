@@ -694,6 +694,47 @@ var server = app.listen(8080, function () {
     console.log('Example app listening at http://%s:%s', host, port);
 });
 ```
+## express代理服务器解决跨域
+```
+const express = require("express");
+// const {createProxyMiddleware} = require('http-proxy-middleware');
+const proxy = require('express-http-proxy');
+const app = express();
+
+// app.use('/',createProxyMiddleware({
+//     // 代理跨域目标接口
+//     target: 'https://test.finance.cloud.tencent.com:8893',
+//     changeOrigin: true,
+// }));
+app.all('*', function (req, res, next) {//必须卸载app.get前面才有效
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
+    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+    res.header("X-Powered-By", ' 3.2.1');
+    if (req.method == "OPTIONS") {
+        res.send(200);
+        /*让options请求快速返回*/
+    } else {
+        next();
+    }
+});
+
+app.use('', proxy( 
+    'https://test.finance.cloud.tencent.com:8893',  // 目标域名，只能写域名，不能带上pathname
+    {
+        proxyReqPathResolver: function(request) {
+            console.log(request.baseUrl)  // '/proxy'
+            console.log(request.url) // ' /api/search'
+            return request.url // 目标数据的pathname,必须有
+        },
+    }
+));
+
+let server = app.listen(8888,function(){ 
+    var port = server.address().port;
+    console.log('服务开启成功端口号是：'+port)
+})
+```
 ## express框架
 [express官网](https://www.expressjs.com.cn/)
 * express是现在node.js的主流框架，和Koa一样，由同一个团队打造，Koa就会更轻而且更小，但是express还是有必要学习一下的
@@ -899,7 +940,50 @@ const cookieParser = require("cookie-parser")
 app.use(cookieParser())
 
 app.get("/home",(req,res)=>{
-  res.cookie('rememberme', '1', { expires: new Date(Date.now() + 900000), httpOnly: true });
+	<!-- res.cookie设置cookie -->
+  res.cookie('username', '1', { expires: new Date(Date.now() + 900000), httpOnly: true });
   console.log(req.cookies)
 })
+app.get("/name",(req,res)=>{
+	<!-- 使用req.cookies.username获取cookie -->
+  const name = req.cookies.username
+  console.log(name)
+  res.send(name)
+})
+```
+* 在设置服务端cookie的时候options有几个常用选项用来配置cookie
+* 其中要注意domain这个选项，用于二级域名之间公用cookie的配置，例如:".jd.com"
+* 还有注意signed这个选项，用于cookie的加密，如果signed为true 则获取cookie则要变成req.signedCookies来获取cookie
+```
+export interface CookieOptions {
+	<!-- 配置cookie有效时间 -->
+    maxAge?: number;
+	<!-- cookie是否加密 -->
+    signed?: boolean;
+	<!-- 配置cookie到哪个时间点失效 -->
+    expires?: Date;
+	<!-- 配置是否能让前端获取到cookie 默认是false 不能 -->
+    httpOnly?: boolean;
+	<!-- 配置在哪个路由下能访问cookie，一般不配置 -->
+    path?: string;
+	<!-- 配置在哪个域名下，二级域名可以公用cookie，例如:".jd.com" -->
+    domain?: string;
+	<!-- 这个如果配置了true，则cookie在http中是无效的，只有在https中是有效的 -->
+    secure?: boolean;
+    encode?: (val: string) => string;
+    sameSite?: boolean | 'lax' | 'strict' | 'none';
+}
+```
+#### Session
+* 在后端的Session和前端不太一样，前端的session是存储在浏览器端，后端的session是存储在服务器端，并且会向浏览器返回一个cookie
+* 所以说如果需要使用到session的话，其实是要基于cookie来使用的
+* 首先，要使用session还需要安装一个插件express-session
+```
+npm install express-session --save
+```
+## webpack自动化部署到服务器
+使用指南[](https://blog.csdn.net/qq_33907414/article/details/104894101?utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~all~first_rank_v2~rank_v25-1-104894101.nonecase&utm_term=%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2%E5%88%B0%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83)
+## 生成目录树
+```
+tree /f > list.txt
 ```

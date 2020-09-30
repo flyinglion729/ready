@@ -864,6 +864,39 @@ setup(){
       }
     },
 ```
+#### setup的生命周期钩子函数
+* 在setup中也可以使用类似vue2.x的生命周期函数，因为组件实例上下文也是在生命周期钩子同步执行期间设置的
+* 所以在组件卸载的时候，在生命周期钩子内部同步创建的监听器和计算状态也将自动删除
+* 以下举例三个常用钩子
+```
+import { onMounted, onUpdated, onUnmounted } from 'vue'
+
+const MyComponent = {
+  setup() {
+    onMounted(() => {
+      console.log('mounted!')
+    })
+    onUpdated(() => {
+      console.log('updated!')
+    })
+    onUnmounted(() => {
+      console.log('unmounted!')
+    })
+  },
+}
+```
+* 其余钩子对应vue2.x如下
+```
+beforeCreate -> 使用 setup()
+created -> 使用 setup()
+beforeMount -> onBeforeMount
+mounted -> onMounted
+beforeUpdate -> onBeforeUpdate
+updated -> onUpdated
+beforeDestroy -> onBeforeUnmount
+destroyed -> onUnmounted
+errorCaptured -> onErrorCaptured
+```
 #### 最后对于使用reactive还是ref的想法
 * 这里面其实更加推荐全部使用reactive，在组合函数返回响应式对象时使用 toRefs即可
 * 因为如果ref里面存储的是复杂数据类型，其实还是会在内部调用reactive的，其中官方文档也是这样描述的
@@ -1102,6 +1135,6 @@ declare module '*.vue' {
 ```
 * 然后就能正常使用typescript了
 > 注意 如果要在.Vue单文件中使用ts 要把script标签改为
-> <script lang="tsx">
+> <script lang="ts">
 #### 如果需要用Vite搭建react脚手架也可以
 [vite脚手架git地址](https://www.npmjs.com/package/create-vite-app)
