@@ -864,6 +864,18 @@ setup(){
       }
     },
 ```
+#### getCurrentInstance
+* vue3.0还有一个隐藏的api,就是getCurrentInstance() 这个api能帮助我们在setup里面取得上下文
+* 就是说能够在setup充当this的作用
+```
+import {getCurrentInstance} from "vue"
+export default {
+	setup(){
+		const { ctx } = getCurrentInstance()
+		console.log("ctx.$emit",ctx.$emit)
+	}
+}
+```
 #### setup的生命周期钩子函数
 * 在setup中也可以使用类似vue2.x的生命周期函数，因为组件实例上下文也是在生命周期钩子同步执行期间设置的
 * 所以在组件卸载的时候，在生命周期钩子内部同步创建的监听器和计算状态也将自动删除
@@ -1105,7 +1117,7 @@ cnpm install sass --save
 yarn add typescript -D
 tsc --init
 ```
-* 如果使用VsCode就跳过上面那一步，我们之间把main.js改为main.ts
+* 如果使用VsCode就跳过上面那一步，我们直接把main.js改为main.ts
 * 但是你会发现控制台还是会报错，原因是因为ts编辑器无法理解.Vue文件
 * 所以我们在src目录下加入一个ts解析文件xxx.d.ts告诉Vite怎么理解.Vue文件即可
 > 这里我使用的是shims-vue为文件名 在 src/shime-vue.d.ts中输入以下命令
