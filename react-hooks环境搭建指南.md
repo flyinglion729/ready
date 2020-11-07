@@ -547,6 +547,96 @@ export default function Login() {
 }
 
 ```
+## useContext、useReducer和createContext代替redux
+* 在reactHooks里面使用redux是非常繁琐的，所以类似useContext、useReducer和createContext这三个Hooks能有效的帮我们实现这个功能
+* 实现的原理是，在所有组件的顶端使用useReducer和useContext包裹起来，即可让所有组件通用里面的状态
+* 首先在src的根目录下，新建一个store文件夹，该文件夹下新建index.js文件还有reducers.js文件
+> 在index.js文件下输入一下代码
+```
+import { createContext } from "react"
+
+export const AppContext = createContext()
+export const { Provider } = AppContext
+```
+> 在reducers.js文件夹下
+* 注意 里面的combineReducers方法是模拟combineReducer功能，将所有子组件的reducer.js合并在一起使用
+* 在大型项目中尤为重要，拆分代码利器
+```
+import { params } from "../page/Home/HomeReducer"
+import { aaa } from "../page/Test/TestReducer"
+
+export const initialState = {
+  params:{
+    username:"asd"
+  }
+}
+
+const combineReducers = (reducers) => {
+  return function(state, action) {
+    return Object.keys(reducers)
+                 .map(k => ({[k]: reducers[k](state[k], action)}))
+                 .reduce((prev, cur) =>(Object.assign({}, prev, cur)))
+  }
+}
+export const reducers = combineReducers({params,aaa})
+```
+* 然后回到我们的根目录下，找到入口文件APP.js，在这里引入store和hooks进行包裹
+```
+<!-- Content为路由的总文件，不用理 -->
+import { Content } from "./routes/Content"
+import { useReducer } from "react"
+import { reducers, initialState} from "./store/reducers"
+import { Provider } from "./store"
+import './App.css';
+
+function App() {
+  const [state, dispatch] = useReducer(reducers, initialState)
+  return (
+    <div className="App">
+      <Provider value={{state, dispatch}}>
+        <Content />
+      </Provider>
+    </div>
+  );
+}
+```
+* 最后就可以在我们的子组件中使用redux了
+* 例如在page/Home文件夹下新建一个HomeReducer文件和Home文件
+> 在Home文件下
+* 这里分两步，第一步是引入useContext，第二步是引入store里面的AppContext用于给useContext初始化
+```
+import React,{ useContext } from 'react'
+import { AppContext } from "@/store"
+
+export const Home = ()=>{
+  const { state, dispatch} = useContext(AppContext)
+  const { username } = state.params
+  console.log("看看",state)
+  return (
+    <div>
+      {username}
+      <button onClick={()=>dispatch({
+        type:"key",
+        value:"666"
+      })}>点击切换</button>
+    </div>
+  )
+}
+```
+> 在HomeReducer文件下
+```
+
+export const params = (state, action) => {
+  switch (action.type) {
+    case 'key':
+      return {...state, username: action.value}
+    case 'date':
+      return {...state, date: action.value}  
+    default: 
+      return state
+  }
+}
+```
 ## 前端处理Blob对象数据
 * 对于Blob的网上官方说法是
 ```
@@ -556,6 +646,25 @@ File接口基于Blob，继承了Blob的功能,并且扩展支持了用户计算�
 * 简单来说，由于前端也就是JS一直以来都没有较好的可以直接处理二进制数据的方法，所以Blob的出现，让我们可以通过
 * JS直接操作二进制数据，也就是Blob
 * Blob对象可以看做是存放二进制数据的容器，另外还可以通过Blob设置二进制数据的MIME类型
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## MIME类型
 * MIME类型是一种文件类型，服务器通过MIME类型可以告知浏览器需要处理的文件属于哪一类
