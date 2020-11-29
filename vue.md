@@ -703,6 +703,7 @@ export default {
 * ref除了含有reactive的功能之外，还有一个它本身的功能，操控dom
 * 当然，在响应式编程里面，用一次dom的消耗是很大的，所以尽量少使用dom
 > 注意 当你在模板中使用ref绑定了一个dom之后，原来的value就失效了，你只能获取到dom元素
+> 注意 模板绑定ref是不需要:ref="xxx"动态绑定的
 ```
 <template>
   <div>

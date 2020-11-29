@@ -105,4 +105,13 @@ const myTween = TweenMax.to(".box", 1, {
 ```
 TweenMax.fromTo('.box', 3, {x: 200,},{x: 500,})
 ```
-#### 
+## 使用npm引入tweenmax
+* 因为tweenmax官网上都是静态文件引入或者cdn，所以这里使用npm包引入可以在脚手架工程中使用到
+```
+//先安装
+npm install gsap --save-dev
+//在文件中导入
+import {TweenMax} from ‘gsap’
+//然后就可以使用了
+TweenLite.to(this.$data, 0.5, { tweenedNumber: newValue })
+```

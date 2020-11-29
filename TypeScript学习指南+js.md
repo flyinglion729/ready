@@ -1103,6 +1103,27 @@ data.run(test)
 ```
 ## TypeScript接入react-cli
 * 随着现在ts越来越火，所以学习ts变得很有必要，下面就是TypeScript接入react的指南
+* 可以使用ts官方react脚手架即可
+#### ts的一些坑
+* 如果你的项目已经使用了ts，引入一些包的时候可能会报这个错
+```
+Could not find a declaration file for module 'xxx'
+```
+* 这个报错说明ts无法识别这个包，这个包是Js的，所以解决办法有两个
+* 1.安装这个包的ts版本 npm install @types/xxx
+* 2.在根目录下找到 shims-vue-d.ts 文件，然后把这个包写进去即可
+```
+declare module '*.vue' {
+  import Vue from 'vue'
+  export default Vue
+}
+// 加上这个
+declare module 'xxx'
+```
+* 你也可以不在乎外部库的类型改成
+```
+declare module '*'
+```
 ## javaScript事件循环
 * 总所周知，js是一个单线程语言，但是也有异步操作，这就涉及到事件循环
 * 首先我们要理解，js的同步操作是在主线程执行的，是会阻塞后面的代码执行
@@ -1129,3 +1150,28 @@ js主线程的同步代码执行  ----->  异步操作的所有微任务(micro-t
 * 是最后谷歌浏览器出了v8引擎才解决了这个问题，但是由于javaScript是Brendan Eich 布兰登·艾克花了10天开发的
 * 难以避免会有一些坑...
 * ![](TypeScript学习指南+js_files/1.png)
+## 前端防抖
+```
+function ajax(content) {
+  console.log('ajax request ' + content)
+}
+
+function debounce(fun, delay) {
+    return function (args) {
+        let that = this
+        let _args = args
+        clearTimeout(fun.id)
+        fun.id = setTimeout(function () {
+            fun.call(that, _args)
+        }, delay)
+    }
+}
+    
+let inputb = document.getElementById('debounce')
+
+let debounceAjax = debounce(ajax, 500)
+
+inputb.addEventListener('keyup', function (e) {
+        debounceAjax(e.target.value)
+    })
+```
