@@ -54,6 +54,21 @@ git reset --hard origin/test
 3.执行上面的命令后dev分支上的代码就完全被test分支上的代码覆盖了，注意只是本地分支，这时候还需要将本地分支强行推到远程分支。
 git push -f
 ```
+## git删除远程分支
+```
+<!-- 查看远程分支 -->
+git branch -a
+
+<!-- 删除远程分支 -->
+git push origin --delete <branchName>
+
+<!-- 删除本地分支 -->
+git branch -d <BranchName>
+```
+## git拉取远程仓库分支到本地
+```
+git fetch origin dev（dev为远程仓库的分支名）
+```
 ## js获取GTM时间
 ```
 new Date().toGMTString()

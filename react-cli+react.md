@@ -1752,6 +1752,39 @@ function App() {
 export default App;
 ```
 * public目录下的图片可以直接引用
+#### 在React中使用绝对路径
+* 随着Create React App 3的发布，我们现在引入组件或对象时可以使用绝对路径（absolute import),而不需要eject项目。
+* 根据官方的解释，只需要在根目录下创建一个jsconfig.json文件，
+* 然后将下面代码放进去即可
+```
+{
+  "compilerOptions": {
+    "baseUrl": "src"
+  },
+  "include": ["src"]
+}
+```
+* 然后你就能使用src下的绝对路径了
+```
+import React from 'react';
+import Button from '../../Button/Button';
+import { LINKS, STRINGS } from '../../../utils/constants';
+import styles from './App.module.css';
+ 
+function App() {
+  return (
+    <div className={styles.App}>
+      <Button>
+        {STRINGS.HELLO}
+      </Button>
+      
+      <a href={LINKS.HELP}>Learn more</a>
+    </div>
+  );
+}
+ 
+export default App;
+```
 #### sass需要安装两个包
 * 安装: cnpm install sass-loader -S
 * cnpm install node-sass -S
