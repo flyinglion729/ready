@@ -819,6 +819,63 @@ import 变量 from "图片的路径"
 ```
 * 如果脚手架安装失败，下载压缩包 安装依赖 npm install
 * yarn安装：https://classic.yarnpkg.com/latest.msi
+#### react自定义环境变量
+* 在实际开发过程中，肯定会有测试环境现网环境多环境切换，react-cli是支持直接调用环境变量进行切换
+* 在使用create react app创建项目的时候，是支持NODE_ENV变量以及提供定义其他所有以REACT_APP_开头的
+* 环境变量，这些环境变量都将定义在process.env上
+```
+<!-- 例如 -->
+定义一个环境变量 : process.env.REACT_APP_URL = XXX
+我们在js中可以引用: process.env.REACT_APP_URL
+```
+* 其中，有一个特殊的环境变量，NODE_ENV，这个环境变量是Node自带的，可以直接进行引用，
+```
+process.env.NODE_ENV
+```
+* 当你使用npm start的时候，它始终等于development
+* 当你使用npm test的时候，它始终等于test
+* 当你使用npm run build的时候，它始终等于production
+* 下面介绍react通过环境变量实现多环境打包
+[react官方介绍](https://create-react-app.dev/docs/adding-custom-environment-variables/#what-other-env-files-can-be-used)
+* 按照react的官方文档可以看到，create-react-app默认是支持多个环境打包的
+* 分别的以下几个文件名，左侧文件比右侧文件优先级更高
+```
+npm start: .env.development.local, .env.development, .env.local, .env
+npm run build: .env.production.local, .env.production, .env.local, .env
+npm test: .env.test.local, .env.test, .env (注意没有 .env.local )
+```
+* 另外，我们还要注意一个坑，使用npm run build的时候默认是加载.env.production的
+* 如果我们需要配置到测试环境怎么办呢，这个时候就需要另外配置一个东西 dotenv-cli
+* 这个 dotenv-cli能够帮我们配置多个环境的变量
+* 首先，我们在我们项目的根目录，也就是package.json的同级目录下新建两个文件
+* .env.production 和 .env.development
+> .env.development文件当使用npm start的时候会默认执行
+```
+// .env.development 文件中
+REACT_APP_BASE_URL='http://development.xxx.xxx' 
+
+// env.production 文件中
+REACT_APP_BASE_URL='http://production.xxx.xxx' 
+```
+* 然后安装dotenv-cli来进行配置
+```
+npm install -D dotenv-cli
+```
+* 修改package.json即可
+* 这时使用npm run build:dev的时候执行的就是.env.development
+```
+"scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:dev": "dotenv -e .env.development react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+},
+```
+* 最后，我们就可以在js代码里使用这个变量
+```
+process.env.REACT_APP_BASE_URL
+```
 #### 脚手架
 * es7插件(ES7 React/Redux/GraphQL/React-Native snippets)  rcc 就能出来类组件 rfc 就是无状态组件
 * 先建一个目录文件夹components 然后再创建一个组件文件夹one 里面放一个index.js文件做组件文件 因为名字是Index
