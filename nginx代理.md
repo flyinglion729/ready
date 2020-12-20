@@ -133,6 +133,13 @@ firewall-cmd-reload
 ```
 ./nginx -s reload
 ```
+* 为了不用一直切换地址来更改Nginx的配置 可以直接使用路径打开配置文件和重启nginx
+```
+配置nginx
+vim /usr/local/nginx/conf/nginx.conf
+重启nginx
+/usr/local/nginx/sbin/nginx -s reload
+```
 ## nginx的配置
 #### nginx配置文件
 * nginx的配置文件在nginx/config目录下的 nginx.conf
@@ -205,4 +212,88 @@ q: 不保存文件并退出vi 编辑
 :e! 放弃所有修改，从上次保存文件开始在编辑
 ```
 [](https://www.cnblogs.com/sxshaolong/p/11706223.html)
+配置nginx
 
+重启nginx
+/usr/local/nginx/sbin/nginx -s reload
+* 首先配置先把需要配置配置代理的网页在配置文件中修改一下
+* 这里需要解释一下 其中server部分的server_name表示前端需要访问的host名称
+* listen表示访问端口，所以这里前端访问的路径就是http://129.204.128.165(80是默认端口可以不加)
+* 然后下面的location是重点
+* 第一个location为 / 表示当你访问http://129.204.128.165 的时候会被转发到http://129.204.128.165:30001这个服务
+* 第二个location为 129.204.128.165/test的时候 会被转发到 http://129.204.128.165:30001/test 这个服务
+```
+<!-- 打开配置文件 -->
+vim /usr/local/nginx/conf/nginx.conf
+
+<!-- 然后使用o进入编辑模式 -->
+<!-- 修改http块中的server部分 -->
+server {
+        listen      80;
+        server_name  129.204.128.165;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+            proxy_pass http://129.204.128.165:30001;
+            add_header Access-Control-Allow-Origin *;
+            add_header Access-Control-Allow-Methods GET,POST,PUT,DELETE,OPTIONS;
+			<!-- 这个表示请求的响应是否可以暴露于该页面 -->
+			add_header Access-Control-Allow-Credentials true; 
+			<!-- 这个表示预检请求头，默认的几个会列出来，但是如果不需要预检其他的请求头就不需要添加 -->
+			# add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+        }
+
+        location /test {
+            proxy_pass http://129.204.128.165:30001;
+            add_header Access-Control-Allow-Origin *;
+            add_header Access-Control-Allow-Methods GET,POST,PUT,DELETE,OPTIONS;
+			<!-- 这个表示请求的响应是否可以暴露于该页面 -->
+			add_header Access-Control-Allow-Credentials true;
+			<!-- 这个表示预检请求头，默认的几个会列出来，但是如果不需要预检其他的请求头就不需要添加 -->
+			# add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+        }
+
+```
+* 这里有一个坑，就是proxy_pass后面加/和不加/是有区别的
+* 当你在http://129.204.128.165:30001这个转发后面加了 / 之后
+* 变成proxy_pass http://129.204.128.165:30001/; 则表示这是一个完整的转发 不会携带location上的路径
+* 也就是前端访问路径则变成 http://129.204.128.165:30001/
+* 如果你没加 / 则 proxy_pass http://129.204.128.165:30001; 
+* 前端访问的路径就会带上location上的路径 ahttp://129.204.128.165:30001/test;
+> 下面摘录网页的网友分享的一个实例说明加 / 和不加 / 的区别
+```
+server {
+        listen 80;
+        server_name www.zhanghehe.com.cn;
+
+        location / {
+                proxy_pass http://192.168.80.11:80;
+        }
+
+        location /administrator {
+                proxy_pass http://192.168.80.11/admin;
+        }
+
+        location /images {
+                proxy_pass http://192.168.80.11/images/;
+        }
+}
+
+第二个location没有加/号，表示如果用户访问的是www.zhanghehe.com.cn/administrator就将其转发到
+http://192.168.80.11/admin/administrator下，不加/的时候，要用proxy_pass的内容替换所属location后的第一个/。
+
+第三个location表示，如果用户访问的是www.zhanghehe.com.cn/images的话就将其转发到
+http://192.168.80.11/images/目录下，加上/的时候，表示完整的替换。
+```
+* 当我们需要跨域用到别的网页中的cookie时，单单这样配置是无法获取的
+* 所以我们需要在增加一个cookie.domain
+```
+location / {
+    # 页面地址是a.com，但是要用b.com的cookie
+    proxy_cookie_domain b.com a.com;  #注意别写错位置了 proxy_cookie_path / /;
+    proxy_pass http://b.com;
+}  
+```

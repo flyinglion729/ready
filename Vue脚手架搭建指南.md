@@ -727,7 +727,16 @@ actions:{
 //不过注意，要改变state里面的数据还是需要经过mutations  其中changeList就是mutations的方法
 //直接使用之后也不需要再在后面加上catch错误之类的，因为在封装的fetch阶段已经截取到了,非常方便
 ```
+## vue反向代理
+* 首先安装一个vue插件
+```
+cnpm install @cnamts/vue-cli-plugin-proxy --save
+```
+* 在package.json的同级根目录新建一个vue.config.js文件
+* 然后配置如下代码即可
+```
 
+```
 ## 附引入font awesome库
 ```
 <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.css" rel="stylesheet">

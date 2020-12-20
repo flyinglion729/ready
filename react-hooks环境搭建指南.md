@@ -683,3 +683,37 @@ audio/wav       wave音频流
 audi/webm       webm音频文件格式
 ...
 ```
+## 数组对象的排序方法
+* 在数组中，sort是一个很好的排序方式。sort()方法是会改变原数组的，而且默认会按unicode编码排序
+* 然鹅这并不是我们想要的，所以sort还支持比较函数排序
+```
+var arr = [
+            { name:"小明", age:12 },
+            { name:"小红", age:11 },
+            { name:"小刚", age:15 },
+            { name:"小华", age:13 }
+        ];
+        
+function compare(p){ //这是比较函数
+    return function(m,n){
+        var a = m[p];
+        var b = n[p];
+        return a - b; //升序
+    }
+}
+arr.sort(compare("age"));
+console.log(arr); 
+//结果如下： 
+//[{name: "小红", age: 11}, 
+//{name: "小明", age: 12},
+//{name: "小华", age: 13}, 
+//{name: "小刚", age: 15}]
+```
+* 同理。降序则是反过来即可
+```
+var arr = [2,3,13,17,4,19,1];
+arr.sort(function(a,b){ // 这是比较函数
+    return b - a;    // 降序
+})
+console.log(arr) // 结果：[19, 17, 13, 4, 3, 2, 1]
+```
