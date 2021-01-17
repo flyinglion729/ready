@@ -278,9 +278,6 @@ export default function Wing() {
 }
 ```
 
-## 首先先安装react的官方脚手架
-* cnpm install -g create-react-app  //这一步是和之前的react一样的
-
 ## React生成条形码
 #### 前端是通过引入一个插件jsbarcode生成条形码
 * 首先先下载这个插件cnpm install isbarcode -s
@@ -716,4 +713,516 @@ arr.sort(function(a,b){ // 这是比较函数
     return b - a;    // 降序
 })
 console.log(arr) // 结果：[19, 17, 13, 4, 3, 2, 1]
+```
+## React脚手架搭建
+* es7插件(ES7 React/Redux/GraphQL/React-Native snippets)  rcc 就能出来类组件 rfc 就是无状态组件
+* 先安装 cnpm install -g create-react-app (使用的是react官方的脚手架 react-cli)
+* 检查一下是否安装好了，如果显示版本号则安装完毕
+```
+create-react-app --version
+```
+* 然后就可以创建一个react项目了
+```
+<!-- your-app为项目的名称可更改 -->
+create-react-app your-app
+```
+#### React自定义环境变量
+* 第二步设置React的开发环境，在React官网中，其实是有暴露出来的环境配置变量的，所以我们直接使用即可
+* 在使用create react app创建项目的时候，是支持NODE_ENV变量以及提供定义其他所有以REACT_APP_开头的
+* 环境变量，这些环境变量都将定义在process.env上
+```
+<!-- 例如 -->
+定义一个环境变量 : process.env.REACT_APP_URL = XXX
+我们在js中可以引用: process.env.REACT_APP_URL
+```
+* 其中，有一个特殊的环境变量，NODE_ENV，这个环境变量是Node自带的，可以直接进行引用，
+```
+process.env.NODE_ENV
+```
+* 其中，有一个特殊的环境变量，NODE_ENV，这个环境变量是Node自带的，可以直接进行引用，
+```
+process.env.NODE_ENV
+```
+* 当你使用npm start的时候，它始终等于development
+* 当你使用npm test的时候，它始终等于test
+* 当你使用npm run build的时候，它始终等于production
+* 下面介绍react通过环境变量实现多环境打包
+[react官方介绍](https://create-react-app.dev/docs/adding-custom-environment-variables/#what-other-env-files-can-be-used)
+* 按照react的官方文档可以看到，create-react-app默认是支持多个环境打包的
+* 分别的以下几个文件名，左侧文件比右侧文件优先级更高
+```
+npm start: .env.development.local, .env.development, .env.local, .env
+npm run build: .env.production.local, .env.production, .env.local, .env
+npm test: .env.test.local, .env.test, .env (注意没有 .env.local )
+```
+* 另外，我们还要注意一个坑，使用npm run build的时候默认是加载.env.production的
+* 如果我们需要配置到测试环境怎么办呢，这个时候就需要另外配置一个东西 dotenv-cli
+* 这个 dotenv-cli能够帮我们配置多个环境的变量
+* 首先，我们在我们项目的根目录，也就是package.json的同级目录下新建两个文件
+* .env.production 和 .env.development
+> .env.development文件当使用npm start的时候会默认执行
+```
+// .env.development 文件中
+REACT_APP_BASE_URL='http://development.xxx.xxx' 
+
+// env.production 文件中
+REACT_APP_BASE_URL='http://production.xxx.xxx' 
+```
+* 然后安装dotenv-cli来进行配置
+```
+npm install -D dotenv-cli
+```
+* 修改package.json即可
+* 这时使用npm run build:dev的时候执行的就是.env.development
+```
+"scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:dev": "dotenv -e .env.development react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+},
+```
+* 最后，我们就可以在js代码里使用这个变量
+```
+process.env.REACT_APP_BASE_URL
+```
+#### React路由配置
+* 首先安装react的路由配置cnpm install react-router-dom -S
+* 然后在index.js入口文件中引入router，并且用路由标签将App包裹起来
+* 然后在Router标签内的组件都能够使用路由，因为react的context的缘故(后面会讲)
+* 路由的两种模式:1.历史记录模式：BrowserRouter
+*               2.Hash模式: HashRouter
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import {BrowserRouter as Router} from "react-router-dom" //在这里切换路由模式
+
+ReactDOM.render(
+    <Router>
+        <App />
+    </Router>
+, document.getElementById('root'));
+```
+* 在组件中使用Router路由的四个组件
+* Route、NavLink、Redirect、Switch
+* Route能将路由的内容展示出来，NavLink和Link基本功能一样，但是能够更加灵活的切换样式，自带一个.active的样式可以设置
+* activeClassName可以更改.active为其他名称
+* Redirect是将路由重另向，例如首页"/"重另向为其他的路由，实现一跳转首页就显示某个组件
+* Switch的作用是当多个路由同时存在于Switch标签里面的时候只保留最后一个组件路由，用于跳转404页面
+* 注意！React路由中是无法自己跳转404页面的，需要在Switch最后的位置设置一个404页面
+```
+import React from 'react';
+import One from "./component/one"
+import Two from "./component/two"
+import './App.css';
+import {Route,NavLink,Redirect,Switch,Link} from "react-router-dom"
+
+var NotFound=()=>{
+  return <div>404页面</div>
+}
+
+function App() {
+  return (
+    <div className="App">
+      <NavLink to="/one" >one</NavLink>
+      <NavLink to="/two" >two</NavLink>
+      <Switch>
+        <Route path="/one" component={One}></Route>
+        <Route path="/two" component={Two}></Route>
+        <Redirect from="/" to="/one" exact></Redirect>
+        <Route component={NotFound}></Route>  //当前面的路由都没有匹配的时候就会跳转404页面
+      </Switch>
+    </div>
+  );
+}
+
+export default App;
+```
+* public目录下的图片可以直接引用
+#### React路由守卫，类似于vue的路由守卫
+* Route 有一个render属性 能够代替component来切换组件
+* render属性里面渲染的组件是不会自带Route的三个属性的，histroy... 所以需要主动传参
+* 而且不但能够传Route的三个属性，还可以传递其他参数非常的方便
+* <Route path="/test" render={(props)=>{ return <Test {...props} a={666} /> }} />
+```
+//父组件可以显示通过render渲染子组件，但是记得要加上props参数，因为组件不会自带Route的三个属性，还可以自由传参
+<Route path="/one" render={(props)=><One {...props} a={666} />}></Route>
+```
+* 通过一个三目运算符即可做出简单判断
+```
+<NavLink to="/one">跳转one</NavLink>
+     <NavLink to="/two">跳转two</NavLink>
+     <Switch>
+       <Route path="/one" component={One}></Route>
+          <Route path="/login" component={Login}></Route>
+          <Route path="/two" render={(props)=>{ //使用简单的三目运算符即可
+            return sessionStorage.getItem("user")?<Two {...props} />:<Redirect to="/login" />
+          }}></Route>
+          <Redirect from="/" to="/one" exact />
+        </Switch>
+```
+* 但是上面的代码不够优雅，一般是自己封装一个myroute进行限制性路由，只要是通过这个myroute就可以实现隔离
+* 这样就能实现代码整齐统一
+```
+//父级组件：
+import MyRoute from "./components/myroute"
+...代码
+<MyRoute path="/two" component={Two}></MyRoute>
+
+//子级MyRoute代码:
+import React, { Component } from 'react'
+import {Route,Redirect} from "react-router-dom"
+
+export default class MyRoute extends Component {
+    render() {
+        let {path,component:Com} = this.props //解析的时候注意component要换大写 因为下面封装的时候组件需要大写
+        return (
+            <div>
+                <Route path={path} render={(props)=>{
+                    return sessionStorage.getItem("user")?<Com {...props} />:<Redirect to="/login"></Redirect>
+                } } ></Route>
+            </div>
+        )
+    }
+}
+```
+* 拓展一个比较常用的Redirect的to也能传location.state的属性
+```
+//父级进行重另向跳转的时候，Redirect的to属性不但能够传字符串，还能传一个对象，在重另向的同时会传递过去
+<Redirect to={{pathname:"/login",state:{path:xxx} }} ></Redirect>
+
+//然后子路由进行接收的时候也是使用this.props.location.state.xxx接收即可
+console.log(this.props.location.state.path)
+```
+* 扩展Route不常用的一个属性，children，无论path有没有匹配上都会渲染里面的组件
+```
+<Route path="/test" children={(props)=><Test {...props} />} />
+```
+#### 在React中使用绝对路径
+* 随着Create React App 3的发布，我们现在引入组件或对象时可以使用绝对路径（absolute import),而不需要eject项目。
+* 根据官方的解释，只需要在根目录下创建一个jsconfig.json文件，
+* 然后将下面代码放进去即可
+```
+{
+  "compilerOptions": {
+    "baseUrl": "src"
+  },
+  "include": ["src"]
+}
+```
+* 然后你就能使用src下的绝对路径了
+```
+import React from 'react';
+import Button from '../../Button/Button';
+import { LINKS, STRINGS } from '../../../utils/constants';
+import styles from './App.module.css';
+ 
+function App() {
+  return (
+    <div className={styles.App}>
+      <Button>
+        {STRINGS.HELLO}
+      </Button>
+      
+      <a href={LINKS.HELP}>Learn more</a>
+    </div>
+  );
+}
+ 
+export default App;
+```
+#### 安装Sass，css的扩展语言
+* sass需要安装两个包
+* 安装: cnpm install sass-loader -S
+* cnpm install node-sass -S
+* 然后就能在项目中使用sass了，新建一个.scss文件试试即可
+```
+.home{
+	background:red;
+	& > p {
+		width:20px;
+		height:20px;
+		background:green
+	}
+}
+```
+#### Redux(useContext、useReducer和createContext代替)
+* 在reactHooks里面使用redux是非常繁琐的，所以类似useContext、useReducer和createContext这三个Hooks能有效的帮我们实现这个功能
+* 实现的原理是，在所有组件的顶端使用useReducer和useContext包裹起来，即可让所有组件通用里面的状态
+* 首先在src的根目录下，新建一个store文件夹，该文件夹下新建index.js文件还有reducers.js文件
+> 在index.js文件下输入一下代码
+```
+import { createContext } from "react"
+
+export const AppContext = createContext()
+export const { Provider } = AppContext
+```
+> 在reducers.js文件夹下
+* 注意 里面的combineReducers方法是模拟combineReducer功能，将所有子组件的reducer.js合并在一起使用
+* 在大型项目中尤为重要，拆分代码利器
+```
+import { params } from "../page/Home/HomeReducer"
+import { aaa } from "../page/Test/TestReducer"
+
+export const initialState = {
+  params:{
+    username:"asd"
+  }
+}
+
+const combineReducers = (reducers) => {
+  return function(state, action) {
+    return Object.keys(reducers)
+                 .map(k => ({[k]: reducers[k](state[k], action)}))
+                 .reduce((prev, cur) =>(Object.assign({}, prev, cur)))
+  }
+}
+export const reducers = combineReducers({params,aaa})
+```
+* 然后回到我们的根目录下，找到入口文件APP.js，在这里引入store和hooks进行包裹
+```
+<!-- Content为路由的总文件，不用理 -->
+import { Content } from "./routes/Content"
+import { useReducer } from "react"
+import { reducers, initialState} from "./store/reducers"
+import { Provider } from "./store"
+import './App.css';
+
+function App() {
+  const [state, dispatch] = useReducer(reducers, initialState)
+  return (
+    <div className="App">
+      <Provider value={{state, dispatch}}>
+        <Content />
+      </Provider>
+    </div>
+  );
+}
+```
+* 最后就可以在我们的子组件中使用redux了
+* 例如在page/Home文件夹下新建一个HomeReducer文件和Home文件
+> 在Home文件下
+* 这里分两步，第一步是引入useContext，第二步是引入store里面的AppContext用于给useContext初始化
+```
+import React,{ useContext } from 'react'
+import { AppContext } from "@/store"
+
+export const Home = ()=>{
+  const { state, dispatch} = useContext(AppContext)
+  const { username } = state.params
+  console.log("看看",state)
+  return (
+    <div>
+      {username}
+      <button onClick={()=>dispatch({
+        type:"key",
+        value:"666"
+      })}>点击切换</button>
+    </div>
+  )
+}
+```
+> 在HomeReducer文件下
+```
+
+export const params = (state, action) => {
+  switch (action.type) {
+    case 'key':
+      return {...state, username: action.value}
+    case 'date':
+      return {...state, date: action.value}  
+    default: 
+      return state
+  }
+}
+```
+#### React反向代理 + Axios封装调用后台数据接口
+* axios官网:[](https://www.kancloud.cn/yunye/axios/234845)
+* 做反向代理的主要目的是为了解决跨域问题，而且方便日后调用接口
+* 首先在npm包先下载一个反向代理模块 npm install http-proxy-middleware -S
+* 然后在src文件夹下新建一个名字为setupProxy.js的文件，然后输入以下代码
+```
+const {createProxyMiddleware} = require('http-proxy-middleware')
+
+module.exports = function(app) {
+    app.use('/chun', 
+    createProxyMiddleware({ 
+        target: 'http://192.168.1.106:8080', //这里写代理的网站
+        changeOrigin: true, 
+        pathRewrite:{
+            "^/chun":"/" //将/api更换成/
+        } 
+      }
+    ));
+    app.use('/city', 
+    createProxyMiddleware({ 
+        target: 'https://c.y.qq.com', //这里写代理的网站
+        changeOrigin: true, 
+        pathRewrite:{
+            "^/city":"/" //将/api更换成/
+        } 
+      }
+    ));
+}
+```
+* 然后在src文件夹下再新建一个utils文件夹，用来存储自己封装的方法
+* 在utils文件夹下新建一个fetch.js，先将axios进行封装
+```
+//fetch.js
+import axios from "axios"
+
+var server = axios.create({
+    baseURL:"/chun",
+    timeout:5000
+})
+axios.defaults.headers.get['Content-Type'] = "application/json"
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+//请求拦截器
+server.interceptors.request.use((config)=>{
+    console.log("请求拦截器")
+    return config
+})
+//响应拦截器
+server.interceptors.response.use((res)=>{
+    return res.data
+})
+
+export default server
+```
+* 然后再在同目录下，也就是utils目录下再新建一个api.js用来存放接口
+```
+import api from "./fetch"  //引入已经封装好的axios文件
+import qs from "qs"
+//注册接口名字
+// export const register = (params)=>{
+//     return axios.get("/register",{params}) //然后发送数据请求
+// }
+//注册接口名字
+//注册
+export const register = (params)=>{
+    return api.post("/register",qs.stringify(params))
+}
+
+//登录
+export const login = (params)=>{
+    return api.post("/Login",qs.stringify(params))
+}
+
+```
+* 然后就可以在组件中进行正常调用了
+```
+import React, { useState } from 'react'
+import { UserOutlined ,InsertRowBelowOutlined} from '@ant-design/icons';
+import { Input,Button } from 'antd'
+import "../home/home.css"
+import {login} from "../../utils/api"
+import md5 from "md5"
+
+export default function Login() {
+    const [username,setUserName] = useState("")
+    const [password,setPassWord] = useState("")
+    const [loading,setLoading] = useState(false)
+    function input(text,e){
+        switch(text){
+            case "user":
+                setUserName(e.currentTarget.value)
+                break;
+            case "pass":
+                setPassWord(e.currentTarget.value)
+                break;
+        }
+    }
+
+    function goRegister(params){
+        login(params).then((res)=>{
+            console.log("数据",res)
+            if (res.code === 4001||res.code === 50001) {
+                window.alert(res.msg)
+                return
+            } else if (res.code === 200) {
+                window.alert(res.msg)
+                return
+            }
+        }).catch((res)=>{
+            window.alert("数据获取失败",res)
+        })
+    }
+
+    function submit(){
+        if (!username.trim()||!password.trim()) {
+            alert("账号密码不能为空")
+            return
+        }
+        let params = {
+            username,
+            password:md5(password)
+        }
+        goRegister(params)
+        setUserName("")
+        setPassWord("")
+    }
+    return (
+        <div className="home">
+            <div className="username">
+                <Input size="large" value={username} onChange={(e)=>input("user",e)} placeholder="请输入用户名" prefix={<UserOutlined />} />
+            </div>
+            <div className="password">
+                <Input size="large" value={password} onChange={(e)=>input("pass",e)} placeholder="请输入密码" prefix={<InsertRowBelowOutlined />} />
+            </div>
+            <div className="buttom">
+                <Button type="primary" loading={loading} onClick={()=>submit()}>提交</Button>
+            </div>
+        </div>
+    )
+}
+
+```
+* 请求拦截器带上token进行访问，响应拦截器检查是否带有token
+```
+// 请求拦截器
+service.interceptors.request.use((config)=>{
+    if(sessionStorage.getItem("token")){
+        config.headers["token"] = sessionStorage.getItem("token")
+    }
+    return config
+})
+// 响应拦截器
+service.interceptors.response.use((res)=>{
+    if(res.data.status === -1){
+        console.log("token验证失败")
+        window.location.href="/login"
+    }
+    return res.data
+})
+```
+#### React配置Webpack
+[react-app-rewired的git仓库](https://github.com/timarney/react-app-rewired#3-flip-the-existing-calls-to-react-scripts-in-npm-scripts)
+* 因为react脚手架内置了webpack实现了热更新，也封装好了webpack的基本选项，所以如果你需要更改里面的webpack可以使用react-app-rewired
+* npm install react-app-rewired --save-dev
+* 然后创建一个config-overrides.js文件在项目的根目录
+```
+/* config-overrides.js */
+
+module.exports = function override(config, env) {
+  //do stuff with the webpack config...
+  return config;
+}
+```
+* override方法的第一个参数config就是 webpack 的配置
+* 在这个方法里面，我们可以对 config 进行扩展，比如安装其他 loader 或者 plugins，最后再将这个 config 对象返回回去。
+* 最后需要在package.json进行配置即可
+```
+  "scripts": {
+-   "start": "react-scripts start",
++   "start": "react-app-rewired start",
+-   "build": "react-scripts build",
++   "build": "react-app-rewired build",
+-   "test": "react-scripts test",
++   "test": "react-app-rewired test",
+    "eject": "react-scripts eject"
+}
 ```

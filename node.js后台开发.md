@@ -674,8 +674,44 @@ ln -s /usr/local/node_global/bin/cnpm /usr/bin/cnpm  (-s 后面是接需要导�
 ```
 ln -s 得到的地址 /usr/local/bin
 ```
-## 小技巧
+## linux使用指南
 * 如果想在某个文件夹下打开cmd，直接在文件夹的路径行输入cmd即可，路径就是当前文件夹下的路径
+#### 查看所有端口号
+* 当我们需要查看所有的端口号时，可以使用以下命令
+```
+netstat -ntlp
+```
+* 或者更简单一点，使用这个命令查看某个端口号是否被占用即可
+```
+lsof  -i:8081
+```
+* 当然更多时候我们会想查看产生这个端口号对应的文件路径
+* 则需要先用以下命令找出这个端口号的进程
+```
+netstat -apn | grep 端口号
+```
+* 再通过以下命令查找到对应进程的文件位置
+```
+ps -ef |grep 884
+```
+#### 新建文件和文件夹
+* 在linux里面新建文件夹
+```
+mkdir 文件夹名称
+<!-- 例如以下代码就新建了一个newMk文件夹 -->
+mkdir newMk
+```
+* 在linux里新建文件
+```
+touch 文件名(注意要带后缀.xxx)
+<!-- 例如下面代码新建一个txt文件 -->
+touch newMk.txt
+```
+#### 查看当前路径
+* 在linux里面查看当前路径
+```
+pwd
+```
 ## node服务简单搭建
 * 新建一个server.js文件，填写如下代码即可
 ```
@@ -986,4 +1022,195 @@ npm install express-session --save
 ## 生成目录树
 ```
 tree /f > list.txt
+```
+## MongoDB安装
+* 首先在官网中下载社区版的MongDB(因为企业版是收费的)
+* [官网](https://www.mongodb.com/try/download)
+* 下载之后进行安装
+* 安装中有一个选项为
+```
+<!-- 安装完整版，会默认安装在C盘 -->
+Complete
+<!-- 自定义安装，可以修改安装地址，所以选择第二个 -->
+Custom
+```
+## Nest.js 脚手架开发
+#### Nest-cli的安装
+* Nest.js是对于node的一个框架，内置有express，具有丰富的api可以使用
+* [官网](https://docs.nestjs.cn/7/introduction)
+* 首先全局安装脚手架
+```
+npm i -g @nestjs/cli
+```
+* 然后使用新建项目命令
+```
+<!-- 其中project-name为项目名称，可更改 -->
+nest new project-name
+```
+* 其中简单叙述一下内置功能模块
+```
+<!-- app.controller.ts -->
+该文件是一个带有单个路由的基本控制器示例。
+<!-- app.module.ts -->
+应用程序的根模块
+<!-- main.ts -->
+应用程序入口文件。它使用 NestFactory 用来创建 Nest 应用实例。
+```
+* 在nest中是内置有express的，所以我们调用express中的api时引用即可
+* 当然，会有特别的引用名
+```
+const express = require("@nestjs/platform-express")
+```
+* 如果需要使用fastify，则需要另外安装一下
+```
+npm i --save @nestjs/platform-fastify
+```
+* 最后，运行程序即可
+> 这里需要注意，如果是开发模式，一定要加上:dev 才会实现自动更新效果，不然需要手动重启
+```
+npm run start:dev 或者 yarn run start:dev
+```
+#### Nest基本模块
+* 首先，Nest分为9大基本模块，类似于早些年间Java面试必问的JSP中的九大内置对象一样
+####   Controllers（控制器）
+* 控制器可以理解为，当客户端也就是Web端向你发送请求的时候，最先由控制器来决定哪一条路由或者方法来返回数据给到客户端所以叫控制器
+* 在脚手架中有一个控制器的示例文件app.controller.ts，按照这个文件我们可以新建一个类似的home.controller.ts的控制器文件
+* 编写以下代码
+> 这里面@Controller装饰器能作为HomeController这个类的前置路由字段
+> @Get装饰器则代表着http请求中的get请求，里面传的字段就是路由
+> 所以下面的字段则表示 访问本机的localhost:3000/home/hello  就会返回里面的"hello world !!!"
+```
+import { Controller, Get } from '@nestjs/common';
+
+@Controller('home')
+export class HomeController {
+  @Get("hello")
+  getHello(): string {
+    return "hello world !!!"
+  }
+}
+
+```
+* 需要注意的是，新建了控制器文件之后，还是要将控制器文件引入到app.module.ts这个模块文件中，然后再统一传入main.ts的入口文件
+```
+<!-- 在app.module.ts文件中 -->
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { HomeController } from "./home/home.controller"
+
+@Module({
+  imports: [],
+  controllers: [AppController,HomeController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+####     更改状态码
+* 在请求响应的过程中，默认成功返回的状态码是200，但除了POST请求是201
+* 如果需要更改返回的状态码，也很简单，在类前面加上一个@HttpCode（...）装饰器即可轻松更改
+```
+@Post()
+@HttpCode(204)
+create() {
+  return 'This action adds a new cat';
+}
+```
+####     获取请求数据
+* 当web端发起请求的时候，很多时候服务端是需要请求的一些信息的，例如请求参数还有请求头，在nestjs里面，获取这些请求细节
+* 是通过express的请求对象发起的，而我们在nestjs里面可以使用@Req()装饰器进行获取
+```
+import { Controller, Get, Req } from '@nestjs/common';
+import { Request } from 'express';
+
+@Controller('cats')
+export class CatsController {
+  @Get()
+  findAll(@Req() request: Request): string {
+	console.log("看看请求",request)
+    return 'This action returns all cats';
+  }
+}
+```
+* 在获取express的请求对象中，不需要完全使用Req对象，nestjs内置了装饰器能帮助你快速拿到对应的body 或者headers和参数等等
+```
+|@Request()				|req							|
+|@Response() @Res()*	|res							|
+|@Next()				|next							|
+|@Session()				|req.session					|
+|@Param(key?: string)	|req.params / req.params[key]	|
+|@Body(key?: string)	|req.body / req.body[key]		|
+|@Query(key?: string)	|req.query / req.query[key]		|
+|@Headers(name?: string)|req.headers / req.headers[name]|
+|@Ip()					|req.ip							|
+```
+* 例如下面例子就是当访问http://localhost:3000/home/hello?a=123&c=123 后获取a和c的值
+```
+import { Controller, Get, Req, Query } from '@nestjs/common';
+import { Request, Response } from 'express';
+
+@Controller('home')
+export class HomeController {
+  @Get("hello")
+  getHello(@Req()request: Request, @Query()key: Response): string {
+    console.log("看看请求",request)
+	<!-- key则就是获取a和b的值 -->
+    console.log("???",key)
+    return "hello world !!!"
+  }
+}
+
+```
+* 有时候我们需要获取到一些路由后面的参数
+* 例如 http://localhost:3000/home/hello/abc 中的abc
+* 我们可以使用路由参数@Param()即可获取
+```
+@Get(':id')
+findOne(@Param() params): string {
+  console.log(params.id);
+  return `This action returns a #${params.id} cat`;
+}
+```
+####     创建POST/PUT等其他请求
+* 在一个控制器内，可以设置多个请求，而且包含get或者post等等
+* 只需要使用对应的装饰器即可
+```
+import { Controller, Get, Post } from '@nestjs/common';
+
+@Controller('cats')
+export class CatsController {
+  @Post()
+  create(): string {
+    return 'This action adds a new cat';
+  }
+
+  @Get()
+  findAll(): string {
+    return 'This action returns all cats';
+  }
+}
+```
+####     自定义响应头
+* 在有些时候，我们返回数据的时候需要修改响应头，这时我们使用@Header()修饰器就能快速修改对应的响应头
+* 要指定自定义响应头，可以使用 @header() 修饰器或类库特有的响应对象,（使用 并 res.header()直接调用）。
+```
+@Post()
+@Header('Cache-Control', 'none')
+create() {
+  return 'This action adds a new cat';
+}
+```
+####     Async / await
+* nestjs是默认支持Async方法的，使用方法和js是一样的
+```
+@Get()
+async findAll(): Promise<any[]> {
+  return [];
+}
+```
+####     请求负载 DTO
+```
+参照
+https://juejin.cn/post/6844903894967910414
+https://juejin.cn/post/6844904054842212359
 ```

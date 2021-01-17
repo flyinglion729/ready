@@ -243,7 +243,7 @@ server {
 			<!-- 这个表示请求的响应是否可以暴露于该页面 -->
 			add_header Access-Control-Allow-Credentials true; 
 			<!-- 这个表示预检请求头，默认的几个会列出来，但是如果不需要预检其他的请求头就不需要添加 -->
-			# add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+			// add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
         }
 
         location /test {
@@ -253,7 +253,7 @@ server {
 			<!-- 这个表示请求的响应是否可以暴露于该页面 -->
 			add_header Access-Control-Allow-Credentials true;
 			<!-- 这个表示预检请求头，默认的几个会列出来，但是如果不需要预检其他的请求头就不需要添加 -->
-			# add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+			// add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
         }
 
 ```
@@ -292,8 +292,60 @@ http://192.168.80.11/images/目录下，加上/的时候，表示完整的替换
 * 所以我们需要在增加一个cookie.domain
 ```
 location / {
-    # 页面地址是a.com，但是要用b.com的cookie
+     <!-- 页面地址是a.com，但是要用b.com的cookie -->
     proxy_cookie_domain b.com a.com;  #注意别写错位置了 proxy_cookie_path / /;
     proxy_pass http://b.com;
 }  
+```
+#### nginx location配置
+* location有自己的语法规则，具体规则为以下符号。
+> 语法规则: location [=|~|~*|^~] /uri/ { … }
+```
+ "=" 			表示精准匹配 例如 location = / {} 就只会匹配根路径下的路由/ 是匹配不到/test的
+ "^~" 			表示uri以某个常规字符串开头，理解为匹配 url路径即可。nginx不对url做编码，因此请求为/static/20%/aa，可以被规则^~ /static/ /aa匹配到
+ "~" 			表示区分大小写的正则匹配  这里需要注意，这个符号表示以xx结尾
+				例如: location ~ \.(gif|jpg|png|js|css)$ {} 注意：是根据括号内的大小写进行匹配。括号内全是小写，只匹配小写
+ "~*"			表示不区分大小写的正则匹配   注意 这里也是以xx结尾 同上
+ "!~"和"!~*""	分别为区分大小写不匹配及不区分大小写不匹配 的正则 注意 这里也是以xx结尾 同上
+ "/"			最后这个则表示所有请求都会接受
+```
+* 在实际场景中，后台接口返回的路由往往是很多个的，这个时候其实我们使用'/'所有请求都会接收到即可
+* 举个例子
+* 我们先在nginx的location处匹配一个路由
+```
+<!-- nginx -->
+		listen      80;
+        server_name  xxx.xxx.xxx.xxx;
+		location / {
+            proxy_pass http://yyy.yyy.yyy.yyy:30001;
+            add_header Access-Control-Allow-Origin *;
+            add_header Access-Control-Allow-Methods GET,POST,PUT,DELETE,OPTIONS;
+        }
+```
+* 然后我们在客户端上请求nginx服务器的xxx.xxx.xxx.xxx:80的所有请求
+* 都会被转发到http://yyy.yyy.yyy.yyy:30001
+* 而且，如果请求地址为
+```
+xxx.xxx.xxx.xxx:80/test
+<!-- 路由也会被带上进行请求转发，也就是说会转到以下地址 -->
+http://yyy.yyy.yyy.yyy:30001/test
+```
+## 使用nginx部署前端静态服务器
+* 除了使用普通的node服务将前端web服务跑起来，还有可以使用Nginx也能将前端服务部署上去
+* 新建一个serve即可
+```
+location ~ / {
+​
+        root /data/www/my-app/dist;
+​
+        index index.html;
+​
+​
+        if ($request_filename ~ .*\.(htm|html)$)
+        {
+            add_header Cache-Control no-store;
+        }
+​
+        try_files $uri $uri/ /index.html;
+    }
 ```
