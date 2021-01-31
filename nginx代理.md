@@ -218,10 +218,10 @@ q: 不保存文件并退出vi 编辑
 /usr/local/nginx/sbin/nginx -s reload
 * 首先配置先把需要配置配置代理的网页在配置文件中修改一下
 * 这里需要解释一下 其中server部分的server_name表示前端需要访问的host名称
-* listen表示访问端口，所以这里前端访问的路径就是http://129.204.128.165(80是默认端口可以不加)
+* listen表示访问端口，所以这里前端访问的路径就是http://xxx.xxx.xxx.xxx(80是默认端口可以不加)
 * 然后下面的location是重点
-* 第一个location为 / 表示当你访问http://129.204.128.165 的时候会被转发到http://129.204.128.165:30001这个服务
-* 第二个location为 129.204.128.165/test的时候 会被转发到 http://129.204.128.165:30001/test 这个服务
+* 第一个location为 / 表示当你访问http://xxx.xxx.xxx.xxx 的时候会被转发到http://xxx.xxx.xxx.xxx:30001这个服务
+* 第二个location为 xxx.xxx.xxx.xxx/test的时候 会被转发到 http://xxx.xxx.xxx.xxx:30001/test 这个服务
 ```
 <!-- 打开配置文件 -->
 vim /usr/local/nginx/conf/nginx.conf
@@ -230,14 +230,14 @@ vim /usr/local/nginx/conf/nginx.conf
 <!-- 修改http块中的server部分 -->
 server {
         listen      80;
-        server_name  129.204.128.165;
+        server_name  xxx.xxx.xxx.xxx;
 
         #charset koi8-r;
 
         #access_log  logs/host.access.log  main;
 
         location / {
-            proxy_pass http://129.204.128.165:30001;
+            proxy_pass http://xxx.xxx.xxx.xxx:30001;
             add_header Access-Control-Allow-Origin *;
             add_header Access-Control-Allow-Methods GET,POST,PUT,DELETE,OPTIONS;
 			<!-- 这个表示请求的响应是否可以暴露于该页面 -->
@@ -247,7 +247,7 @@ server {
         }
 
         location /test {
-            proxy_pass http://129.204.128.165:30001;
+            proxy_pass http://xxx.xxx.xxx.xxx:30001;
             add_header Access-Control-Allow-Origin *;
             add_header Access-Control-Allow-Methods GET,POST,PUT,DELETE,OPTIONS;
 			<!-- 这个表示请求的响应是否可以暴露于该页面 -->
@@ -258,11 +258,11 @@ server {
 
 ```
 * 这里有一个坑，就是proxy_pass后面加/和不加/是有区别的
-* 当你在http://129.204.128.165:30001这个转发后面加了 / 之后
-* 变成proxy_pass http://129.204.128.165:30001/; 则表示这是一个完整的转发 不会携带location上的路径
-* 也就是前端访问路径则变成 http://129.204.128.165:30001/
-* 如果你没加 / 则 proxy_pass http://129.204.128.165:30001; 
-* 前端访问的路径就会带上location上的路径 ahttp://129.204.128.165:30001/test;
+* 当你在http://xxx.xxx.xxx.xxx:30001这个转发后面加了 / 之后
+* 变成proxy_pass http://xxx.xxx.xxx.xxx:30001/; 则表示这是一个完整的转发 不会携带location上的路径
+* 也就是前端访问路径则变成 http://xxx.xxx.xxx.xxx:30001/
+* 如果你没加 / 则 proxy_pass http://xxx.xxx.xxx.xxx:30001; 
+* 前端访问的路径就会带上location上的路径 ahttp://xxx.xxx.xxx.xxx:30001/test;
 > 下面摘录网页的网友分享的一个实例说明加 / 和不加 / 的区别
 ```
 server {
@@ -292,7 +292,7 @@ http://192.168.80.11/images/目录下，加上/的时候，表示完整的替换
 * 所以我们需要在增加一个cookie.domain
 ```
 location / {
-     <!-- 页面地址是a.com，但是要用b.com的cookie -->
+    <!-- 页面地址是a.com，但是要用b.com的cookie -->
     proxy_cookie_domain b.com a.com;  #注意别写错位置了 proxy_cookie_path / /;
     proxy_pass http://b.com;
 }  
@@ -330,6 +330,34 @@ xxx.xxx.xxx.xxx:80/test
 <!-- 路由也会被带上进行请求转发，也就是说会转到以下地址 -->
 http://yyy.yyy.yyy.yyy:30001/test
 ```
+#### location root和alias的区别
+* 在使用location匹配路由的时候，如果要访问静态资源，会用到root和alias两个命令
+* 都是用于访问静态资源的，但是两者也是有区别的
+```
+root    实际访问文件路径会拼接URL中的路径
+alias   实际访问文件路径不会拼接URL中的路径
+```
+* 实例
+> alias
+```
+location /sta {  
+   alias /usr/local/nginx/html/static/;  
+}
+<!-- 请求 -->
+http://test.com/sta/sta1.html
+<!-- 实际访问 -->
+/usr/local/nginx/html/static/sta1.html 文件
+```
+> root
+```
+location /tea {  
+   root /usr/local/nginx/html/;  
+}
+<!-- 请求 -->
+http://test.com/tea/tea1.html
+<!-- 实际访问 -->
+/usr/local/nginx/html/tea/tea1.html 文件
+```
 ## 使用nginx部署前端静态服务器
 * 除了使用普通的node服务将前端web服务跑起来，还有可以使用Nginx也能将前端服务部署上去
 * 新建一个serve即可
@@ -349,3 +377,96 @@ location ~ / {
         try_files $uri $uri/ /index.html;
     }
 ```
+## 使用nginx做负载均衡
+[引用文章](https://www.cnblogs.com/Cubemen/p/11387975.html)
+* 通过增加服务器的数量，然后将请求分发到各个服务器上，将原先请求集中到单个服务器上的情况变成
+* 分发到多个服务器上，将负载分发到不同的服务器上，也就是我们所说的负载均衡
+* 负载均衡的基础用法
+```
+<!-- 其中 upstream 就表示声明了一个负载均衡的服务 -->
+http:{
+	...代码
+	upstream myserver{
+	    server 127.0.0.1:8080 weight=1;
+	    server 127.0.0.1:8081 weight=1;
+	}
+	...代码
+	server{
+		location / {
+			<!-- 然后在这里进行引用即可 名称为myserver -->
+			proxy_pass http://myserver;
+			<!-- 请求超时设置为10秒 -->
+			proxy_connect_timeout 10;
+		}
+	}
+}
+
+```
+* 当然，在平时使用的时候我们会对nginx进行配置
+* nginx的基本参数
+```
+round robin（默认）：
+	轮询方式，依次将请求分配到后台各个服务器中，适用于后台机器性能一致的情况，若服务器挂掉，可以自动从服务列表中剔除
+
+weight：(默认为1)
+	根据权重来分发请求到不同服务器中，可以理解为比例分发，性能较高服务器分多点请求，较低的则分少点请求
+
+IP_hash：
+	根据请求者ip的hash值将请求发送到后台服务器中，保证来自同一ip的请求被转发到固定的服务器上，解决session问题
+
+fair：
+	根据后端服务器的响应时间来分配请求，响应时间短的优先分配(使用的时候和ip_hash差不多，但是是写在最后)
+```
+* 默认我们是需要使用IP_hash模式的，因为如果不能保证同一个ip的请求访问固定的服务器，会导致用户重复登录
+* 的问题，因为session的登录信息一般存储在后端
+* 配合其他参数使用如下
+```
+upstream myserver{  
+<!-- 表示使用ip的hash值 -->
+ip_hash;    
+<!-- down表示该server不参与负载 -->
+server 127.0.0.1:9090 down;    
+<!-- 默认为1.weight越大，负载的权重就越大 -->
+server 127.0.0.1:8080 weight=2;  
+server 127.0.0.1:6060;  
+<!-- 其它所有的非backup机器down或者忙的时候，请求backup机器。所以这台机器压力会最轻 -->
+server 127.0.0.1:7070 backup;   
+
+<!-- fair; -->
+}
+```
+* 还有其他不常使用的参数
+```
+max_fails  		允许请求失败的次数默认为1.当超过最大次数时，返回proxy_next_upstream 模块定义的错误
+fail_timeout  	max_fails次失败后，暂停的时间
+```
+## 使用nginx实现动静分离
+* nginx动静分离简单来说就是将动态请求和静态请求分开，不能理解成单纯的把静态页面和动态页面进行分开
+* 而是把nginx处理静态页面，请求后端接口使用动态
+* 目前市场上使用动静分离有两种方式
+```
+1.纯粹把静态文件独立成单独的域名，放在单独的服务器上，也是目前主流推崇的方案
+2.另一种方式就是动态跟静态文件放在一起，然后通过Nginx分开
+```
+* 简单实现动静分离
+* 其中当你访问xxx.xxx.xxx.xxx:9000/home的时候会跳转静态web服务
+* 第二个访问xxx.xxx.xxx.xxx:9000/image的时候则会跳转对应的静态文件目录
+* autoindex on; 表示是否显示展开目录
+```
+...代码
+	server {
+        listen  9000;
+        server_name xxx.xxx.xxx.xxx;
+        location /home { 
+                alias /usr/html/one/dist; 
+                index index.html;
+        } 
+        location /image {  
+                alias /usr/html/image;
+                autoindex on;
+        }    
+    } 
+```
+## 使用nginx实现高可用配置
+* 在正式环境中运行时，因为Nginx也是一个程序，不可避免会挂掉或者说是宕机，如果发生宕机之后整个nginx
+* 就用不了，所以这个时候就需要配置高可用

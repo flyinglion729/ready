@@ -712,6 +712,21 @@ touch newMk.txt
 ```
 pwd
 ```
+#### 删除文件夹
+```
+rm -rf xxx
+```
+#### 解压压缩包
+* 压缩包格式有两种，zip和tar 但是zip在压缩率方面没有做的很好，相反tar.gz和tar.bz2在压缩率方面
+* 做得更好
+* 解压压缩包有两种形式，一个是.zip
+```
+unzip xxx.zip 
+```
+* 另外一种为.tar格式
+```
+tar -xvf filename.tar
+```
 ## node服务简单搭建
 * 新建一个server.js文件，填写如下代码即可
 ```
