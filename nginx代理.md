@@ -470,3 +470,26 @@ fail_timeout  	max_fails次失败后，暂停的时间
 ## 使用nginx实现高可用配置
 * 在正式环境中运行时，因为Nginx也是一个程序，不可避免会挂掉或者说是宕机，如果发生宕机之后整个nginx
 * 就用不了，所以这个时候就需要配置高可用
+```
+现在主流的做法就是使用多台服务器，多台服务器上都安装nginx和keepalived，
+```
+* 要配置高可用，首先要准备以下东西
+```
+1.两台以上的服务器
+2.两台服务器上都安装nginx
+3.两台服务器上都安装keepalived
+```
+* 其中keepalived使用的是虚拟冗余路由协议（VRRP）实现高可用性
+* 主要提供两个主要功能
+```
+1.健康检查LVS系统
+2.实施VRRPv2堆栈以处理负载均衡器故障转移
+```
+* 安装nginx上面已经有教程，下面是安装keeplived
+* 可以直接使用yum命令进行安装
+```
+yum install keepalived -y
+```
+* 然后使用命令rpm -q -a keepalived 可以看到版本号
+* 安装完成之后可以在目录 /etc 里面找到 keepalived 文件夹里面有一个 keepalived.conf文件可以进行配置
+
