@@ -1086,10 +1086,46 @@ npm i --save @nestjs/platform-fastify
 npm run start:dev 或者 yarn run start:dev
 ```
 #### Nest基本模块
+> 以下的学习模块参照
+> [参照网站1](https://juejin.cn/post/6844903894967910414)
+> [参照网站2](https://juejin.cn/post/6844904054842212359)
 * 首先，Nest分为9大基本模块，类似于早些年间Java面试必问的JSP中的九大内置对象一样
+* 其次，需要了解 app.module.ts 根模块文件 和 main.ts入口文件
+* 该文件负责整合控制器和服务
+```
+<!-- app.module.ts -->
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { HomeController } from "./home/home.controller"
+
+@Module({
+  imports: [],
+  controllers: [AppController,HomeController],		// 这里就是控制器
+  providers: [AppService],							// 这里就是对应的服务
+})
+export class AppModule {}
+```
+* 其中如果需要在所有请求中加上一个请求前缀，我们可以直接在main.ts中进行加入即可
+```
+<!-- main.ts -->
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api/v1');
+  await app.listen(3000);
+}
+bootstrap();
+```
 ####   Controllers（控制器）
 * 控制器可以理解为，当客户端也就是Web端向你发送请求的时候，最先由控制器来决定哪一条路由或者方法来返回数据给到客户端所以叫控制器
 * 在脚手架中有一个控制器的示例文件app.controller.ts，按照这个文件我们可以新建一个类似的home.controller.ts的控制器文件
+* 如果需要新建控制器 有个更简单的方法，可以直接在命令行输入以下代码则自动生成对应的目录
+```
+nest g controller xxx
+```
 * 编写以下代码
 > 这里面@Controller装饰器能作为HomeController这个类的前置路由字段
 > @Get装饰器则代表着http请求中的get请求，里面传的字段就是路由
@@ -1135,7 +1171,7 @@ create() {
 * 当web端发起请求的时候，很多时候服务端是需要请求的一些信息的，例如请求参数还有请求头，在nestjs里面，获取这些请求细节
 * 是通过express的请求对象发起的，而我们在nestjs里面可以使用@Req()装饰器进行获取
 ```
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get, Req , Body} from '@nestjs/common';
 import { Request } from 'express';
 
 @Controller('cats')
@@ -1144,6 +1180,12 @@ export class CatsController {
   findAll(@Req() request: Request): string {
 	console.log("看看请求",request)
     return 'This action returns all cats';
+  }
+  
+  @Post()
+  findPost(@Body() request: Request): string {
+	  console.log("看看post请求参数", request)
+	  return 'This is post'
   }
 }
 ```
@@ -1224,8 +1266,53 @@ async findAll(): Promise<any[]> {
 }
 ```
 ####     请求负载 DTO
+* DTO简单理解就是，定义如果通过网络传输数据的对象，以便方便校验，通常会配合class-validator和class-transformer做校验
+* 例如
 ```
-参照
-https://juejin.cn/post/6844903894967910414
-https://juejin.cn/post/6844904054842212359
+<!-- dto文件 -->
+import { IsString, IsInt } from 'class-validator';
+
+export class CreateCatDto {
+  @IsString()
+  readonly name: string;
+
+  @IsInt()
+  readonly age: number;
+
+  @IsString()
+  readonly breed: string;
+}
+```
+```
+<!-- 需要导入dto文件的文件 -->
+import { Controller, Get, Query, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { CreateCatDto } from './dto';
+
+@Controller('cats')
+export class CatsController {
+  @Post()
+  create(@Body() createCatDto: CreateCatDto) {
+    return 'This action adds a new cat';
+  }
+}
+```
+* 在上面例子中，如果其中的post请求中body传递过来的参数不符合dto类型限制则会直接报错
+#### @module()
+* 当所有控制器都准备好的时候，需要将他们引入main.ts中的@module()进行整合，最后才能返回出去
+* 这里需要注意的是，这里一般会多加入一个providers，也就是service
+* 其中AppService可以理解成是Controller控制器到Module之前的中间层，可以负责处理数据库逻辑的地方
+```
+<!-- 在 MVC 模式中，controller 通过 model 获取数据。对应的，在 Nestjs 中，controller 负责处理传入的请求, 并调用对应的 service 完成业务处理，返回对客户端的响应。 -->
+<!-- main.ts -->
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { HomeController } from "./home/home.controller"
+
+@Module({
+  imports: [],
+  controllers: [AppController,HomeController],
+  providers: [AppService],
+})
+export class AppModule {}
 ```

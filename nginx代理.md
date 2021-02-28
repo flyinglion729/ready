@@ -492,4 +492,190 @@ yum install keepalived -y
 ```
 * 然后使用命令rpm -q -a keepalived 可以看到版本号
 * 安装完成之后可以在目录 /etc 里面找到 keepalived 文件夹里面有一个 keepalived.conf文件可以进行配置
+```
+<!-- 其中 global_defs 为全局定义，里面最重要的主要就是router_id 是唯一的值 -->
+<!-- router_id 需要在linux里面的 vim /etc/hosts 文件中 -->
+global_defs {
+    router_id lb01 #这个router_id是访问主机的名字
+}
+<!-- 检测脚本，用于判断虚拟ip指向哪个地址 -->
+vrrp_script chk_http_port {
+	script "/usr/local/src/nginx_check.sh" 	# 脚本路径
+	interval 2 								# (检测脚本间隔) 这里指的是每隔2s检测一次
+	/* 
+	*	# (检测脚本权重) weight这个比较复杂可以简单理解为两种情况 一个是weight为正值一个是负值
+	*	1.当weight为正值时:
+	*		(1)script脚本执行成功 则Master节点权值为 priority + weight。
+	*		然后和Backup节点的priority + weight权值相比较，如果大于则不进行主备切换
+	*		(2)script脚本执行失败 则Master节点的权值仅为 priority。如果这个值小于Backup节点
+	*		的权值priority + weight，则发生主备切换
+	*	2.当weight为负值时:
+	*		(1)script脚本执行成功 Master节点权值为 priority。
+	*		然后和Backup节点同为权值priority比较，如果大于则不切换
+	*		(2)script脚本执行失败 Master节点权值为 priority 减去 weight
+	*		然后和Backup节点权值的priority进行比较，如果小于则切换
+	*	# 所以上面总结所述，如果使用weight正值，一定要保证 备用节点Backup的priority + weight > matser节点的priority
+	*/
+	weight 2
+}
 
+<!-- 虚拟Ip的配置 -->
+vrrp_instance VI_1 {
+    state MASTER 			# 主服务器为MASTER 如果为备份服务器 则改为BACKUP
+    interface eth0			# 网卡部分，在哪台主机绑定你的虚拟ip 使用ifconfig 第一行的第一个就是 一般是eth0
+    virtual_router_id 50 	# 路由id部分， 主机和备用机的virtual_router_id必须相同
+    priority 150 			# 优先级 如果要成为MASTER主要服务器 则要比BACKUP多50
+    advert_int 1  			# 检查间隔，默认1秒 VRRP心跳包的发送周期，单位为s 组播信息发送间隔，两个节点设置必须一样
+							  检测服务器是否还活着的时间间隔
+    authentication {		# 设置认证
+        auth_type PASS		# 认证方式
+        auth_pass 1111		# 认证密码（密码只识别前8位）
+}
+    virtual_ipaddress {		# 设置vip
+        10.0.0.3			# VRRP H虚拟地址
+    }
+}
+```
+* 其中的hosts文件中加入router_id
+```
+<!-- /etc/hosts -->
+127.0.0.1 lb01
+```
+* 其中在/usr/local/src/nginx_check.sh 路径下的脚本文件编写如下
+```
+#!/bin/bash
+A=`ps -C nginx --no-header |wc -l`
+if [ $A -eq 0 ];then
+	/usr/local/nginx/sbin/nginx  #这里填写nginx的地址
+	sleep 2
+	if [ `ps -C nginx --no-header |wc -l` -eq 0 ];then
+		killall keepalived
+	fi
+fi
+```
+* 最后把两台服务器中的nginx和Keepalived启动起来就可以了
+* Nginx之前启动过了，下面直接启动Keepalived即可
+```
+<!-- 启动keepalived -->
+systemctl start keepalived.service
+
+<!-- 启动完成之后，查看keepalived进程 -->
+ps -ef | grep keepalived
+```
+* 然后高可用就配置完成了，当访问keepalived的虚拟ip的时候，有优先访问master上的ip地址服务器
+* 如果停掉master上的ip服务器则会访问备份服务器
+> 这里需要注意的是，这个虚拟ip 需要和前面两个备份服务器在同一个网段中，也就是前三个数字需要一样
+> 10.0.0.x 
+* 如果配置高可用的机子不在同一个机房内，或者说网段不一样，则需要换一种方案来设计高可用
+* 具体可以搜索 异地多活的设计思路
+#### linux shell 语法
+> .sh结尾的是代表liunx系统的脚本文件
+> [sh脚本语法讲解](https://blog.csdn.net/missshirly/article/details/7496809)
+* 其中需要注意的是，在linux语法中单引号和双引号使用的时候是有具体的区别的
+* 引用至[作者地址](https://www.cnblogs.com/panhongyin/p/5603508.html)
+```
+'' 和 "" 的共同点就是，他们都是用来界定一个字符串的但是区别还是很大的
+1.''单引号属于强引用，它会忽略所有单引号里面的字符特殊处理直接输出原始值，但是不允许引用自身
+
+2.""双引号属于弱引用，它会对被引起来的字符进行特殊处理，例如
+	(1) $加变量名可以取变量的值 
+		[root@localhost ~]# echo '$PWD'
+	　　$PWD　　
+	
+	　　[root@localhost ~]# echo "$PWD"
+	　　/root 
+	(2) 反引号和$()引起来的字符会被当做命令执行后替换原来的字符
+		[root@localhost ~]# echo '$(echo hello world)'
+		$(echo hello world)
+		[root@localhost ~]# echo "$(echo hello world)"
+		hello world
+		
+		[root@localhost ~]# echo '`echo hello world`'
+		`echo hello world`
+		[root@localhost ~]# echo "`echo hello world`"
+		hello world 
+	(3) 当需要使用字符（$  `  "  \）时必须进行转义，也就是在前面加\ 
+		[root@localhost ~]# echo '$ ` " \'
+		$ ` " \
+		[root@localhost ~]# echo "\$ \` \" \\"
+		$ ` " \
+```
+* 其中还有一种特殊的引号 `` 就是反引号 就是键盘1左边的那个符号
+* 这个符号的作用和上面两种符号的作用都不一样，主要作用是强制执行liunx命令并存储的作用
+```
+反引号的作用就是将反引号内的Linux命令先执行，然后将执行结果赋予变量
+例如下面的例子，反引号里面的linux命令会被执行，然后结果被赋予变量 listc
+
+$ listc=`ls *.c`  
+
+$ echo $listc  
+
+main.c prog.c lib.c 
+```
+## nginx具体实现原理
+* 首先nginx是分为两部分 master进程和worker进程
+* master可以简单理解为管理员，而worker为工作人员，所以是一对多的关系
+* 我们可以直接在linux里面使用进程命令来查看这两个进程
+```
+<!-- 查看nginx的master和worker进程 -->
+ps -ef | grep nginx
+```
+* worker的工作方式为
+* 当请求到达nginx之后，多个worker会进行争抢，知道脸上tomcat
+```
+web --->  nginx ----> worker1
+				----> worker2
+				----> worker3 ----> tomcat √ (连接成功)
+				----> worker4
+```
+* 每个worker都是独立线程的，这就保证如果有某个线程的worker宕机了，其他worker还是正常使用的
+* 因为nginx是通过异步非阻塞的方式进行，所以千万个请求也是没问题的，每个worker的线程可以把一个cpu的性能
+* 发挥到极致。所以worker数和服务器的cpu的核数相等最为适宜。设少了则浪费cpu，设多了会对切换上下文带来性能损耗
+* 设置worker数，我们可以在nginx.conf里面进行设置，一般是要和worker_cpu_affinity属性进行搭配使用
+* worker_cpu_affinity 属性表示连接的cpu中的第几个核
+```
+<!-- 设置开启4个进程 -->
+worker_processes 4;
+<!-- 
+	下面表示4核CPU 0001开启第一个cpu 0010开启第二个，以此类推
+	如果是2核CPU 则是 01 10 两位数，其他逻辑同上
+-->
+worker_cpu_affinity 0001 0010 0100 1000;
+```
+* 最后还要配置 events 中的worker_connections 属性，这个属性表示允许woker并发的连接数
+```
+events {
+    worker_connections  1024; #默认值是1024
+}
+```
+* 这里需要注意，因为一个工作进程建立连接之后，进程将打开一个文件副本，所以这个值还会受到系统的
+* 一个进程最多能打开多少个文件数值有关。
+* 综上所述，如果你需要修改worker_connections这个值，还需要修改系统的参数，但是nginx已经帮你想好了
+* 只需要搭配worker_rlimit_nofile 属性即可
+```
+user root root;
+worker_processes 4;
+worker_rlimit_nofile 65535; #覆盖系统的默认进程打开数限制，调至最大
+
+#error_log logs/error.log;
+#error_log logs/error.log notice;
+#error_log logs/error.log info;
+
+#pid logs/nginx.pid;
+events {
+        worker_connections 65535; #因为上面已经调至最大，这边才能修改与之一样的值
+}
+```
+* 这里说明一下一个nginx所能承受的web端的访问并发量计算规则
+```
+<!-- 
+	这里指的是最大连接数，对于http请求本地资源来说，能够支持的最大并发量为这么多
+	但是如果是支持http1.1的浏览器，每次访问要占用两个连接数，
+	所以普通的静态访问支持的并发量为worker_connections * worker_processes/2
+	但是如果是使用nginx做反向代理，nginx不单单会链接web端还要链接另一端的服务端
+	所以反向代理的时候支持的并发量为worker_connections * worker_processes/4
+-->
+1. 一个nginx能建立的最大连接数为 worker_connections * worker_processes
+2. 一个nginx能建立的http1.1访问web并发量为 worker_connections * worker_processes/2
+3. 一个nginx做反向代理能处理的并发量为 worker_connections * worker_processes/4
+```
